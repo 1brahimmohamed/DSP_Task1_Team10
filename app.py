@@ -98,7 +98,7 @@ def add_signal():
     # get amplitude of first signal from request & cast it to float array
     signal_1_amp = [float(i) for i in request.form.getlist('signal1[]')]
 
-    # get amplitude of first signal from request & cast it to float array
+    # get amplitude of second signal from request & cast it to float array
     signal_2_amp = [float(x) for x in request.form.getlist('signal2[]')]
 
     signal_1_amp_np_array = np.array(signal_1_amp)      # convert python list to np array for easy adding amplitude
@@ -108,6 +108,26 @@ def add_signal():
     added_signal = signal_1_amp_np_array + signal_2_amp_np_array
 
     return list(added_signal)
+
+
+@app.route('/subtract-signals', methods=['POST'])
+def subtract_signal():
+
+    # get up parameters for signal subtraction #
+
+    # get amplitude of first signal from request & cast it to float array
+    signal_main = [float(i) for i in request.form.getlist('signal1[]')]
+
+    # get amplitude of second signal from request & cast it to float array
+    signal_to_be_subtracted = [float(x) for x in request.form.getlist('signal2[]')]
+
+    signal_1_amp_np_array = np.array(signal_main)                  # convert python list to np array for easy subtracting amplitude
+    signal_2_amp_np_array = np.array(signal_to_be_subtracted)      # convert python list to np array for easy subtracting amplitude
+
+    # subtract the signal
+    subtracted_signal = signal_1_amp_np_array - signal_2_amp_np_array
+
+    return list(subtracted_signal)
 
 # --------------------------------------------------------------------------------------#
 #                                       Run App
