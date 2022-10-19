@@ -1,0 +1,12 @@
+.myContainer{
+    width: 49%;
+    height: 90vh;
+    background-color: blue;
+    display: inline-block;
+}
+
+.myNav{
+    height: 5vh;
+    background-color: #ff0059;
+    margin-bottom:  0.2rem ;
+}

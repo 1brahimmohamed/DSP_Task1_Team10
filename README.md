@@ -1,4 +1,4 @@
-﻿# Digital Signal Samplig Studio
+# Digital Signal Samplig Studio
 
 Digital Signal Processing Web Application for sampling signals and more
 
