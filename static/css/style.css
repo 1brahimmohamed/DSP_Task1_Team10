@@ -7,7 +7,7 @@
 
 html {
   box-sizing: border-box;
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: Arial, sans-serif;
   color: var(--dark);
 }
 
@@ -25,6 +25,7 @@ body {
   text-decoration: none;
   border: 0;
   opacity: 0.8;
+  margin-top: 10px;
 }
 
 .btn:hover {
@@ -48,7 +49,6 @@ body {
 }
 
 .main-nav h1{
-  position: center;
   color: #ffffff;
   font-family: 'Arial',serif;
   font-size: 21px;
@@ -58,6 +58,7 @@ body {
   margin-bottom:10px;
   text-align: left;
   padding-top: 11px;
+  letter-spacing: -1px;
 }
 
 
@@ -67,7 +68,6 @@ body {
   grid-template-areas:
           'box-a plotting'
           'box-b plotting'
-          'box-c plotting';
 }
 
 .plotting {
@@ -98,6 +98,8 @@ body {
   justify-items: center;
   box-shadow: var(--shadow);
   padding: 1.5rem;
+  max-height: 250px;
+  overflow-y: auto;
 }
 
 
@@ -107,10 +109,6 @@ body {
 
 .box-b {
   grid-area: box-b;
-}
-
-.box-c {
-  grid-area: box-c;
 }
 
 
@@ -159,6 +157,31 @@ body {
   opacity: 1;
 }
 
+.signal-table {
+  font-family: Arial, sans-serif;
+  border-collapse: collapse;
+  width: 100%;
+}
+
+
+.signal-table td, .signal-table th {
+  border: 2px solid #ddd;
+  padding: 8px;
+  font-size: 14px;
+}
+
+.signal-table tr:nth-child(even){background-color: #f2f2f2;}
+
+.signal-table tr:hover {background-color: #ddd;}
+
+.signal-table th {
+  padding-top: 12px;
+  padding-bottom: 12px;
+  text-align: center;
+  background-color: #0076A7;
+  color: white;
+}
+
 
 /* Media Queries */
 @media (max-width: 700px) {
@@ -166,7 +189,6 @@ body {
     grid-template-areas:
       'box-a'
       'box-b'
-      'box-c'
       'plotting';
   }
 
@@ -177,7 +199,6 @@ body {
       grid-template-areas:
       'box-a'
       'box-b'
-      'box-c'
       'plotting'
     }
   }

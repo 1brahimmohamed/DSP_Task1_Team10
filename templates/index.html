@@ -19,67 +19,52 @@
         
     <section class="body">
         <div class="box box-a">
-            <a href="" class="btn">Upload Signal</a>
+            <table class="signal-table" id="signals">
+              <tr>
+                <th>Name</th>
+                <th>Frequency</th>
+                <th>Amplitude</th>
+
+              </tr>
+              <tr>
+                <td>Signal 1</td>
+                <td>Hz</td>
+                <td>0</td>
+              </tr>
+              <tr>
+                <td>Signal 2</td>
+                <td>Hz</td>
+                <td>0</td>
+              </tr>
+
+            </table>
+            <a href="" class="btn">Add</a>
+
         </div>
         <div class="box box-b">
-           <div class="slider-container">
-               <p> Amplitude</p>
-               <input type="range" min="1" max="100" value="50" class="slider" id="amplitude">
-               <p>Value: <span id="value1"></span></p>
-            </div>
-            <div class="slider-container">
-               <p> Frequency</p>
-               <input type="range" min="1" max="100" value="50" class="slider" id="frequency">
-               <p>Value: <span id="value2"></span></p>
-            </div>
-            <a href="" class="btn">Generate Signal</a>
-        </div>
-        <div class="box box-c">
-            <div class="slider-container">
-               <p> Sample</p>
-               <input type="range" min="1" max="100" value="50" class="slider" id="sample">
-               <p>Value: <span id="value3"></span></p>
-            </div>
+           <table class="signal-table" id="current-signals">
+              <tr>
+                <th>Name</th>
+                <th>Frequency</th>
+                <th>Amplitude</th>
 
-            <a href="" class="btn">Reconstruct</a>
+              </tr>
+              <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+              </tr>
+              <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+              </tr>
+            </table>
+            <a href="" class="btn">Remove</a>
         </div>
-
         <header class="plotting">
             <canvas class="canvas" id="canvas-1" ></canvas>
         </header>
-    </section>
-
-    <section class="body">
-
-        <div class="box box-a">
-           <div class="slider-container">
-               <p> Amplitude</p>
-               <input type="range" min="1" max="100" value="50" class="slider" id="amplitude2">
-               <p>Value: <span id="value4"></span></p>
-            </div>
-            <div class="slider-container">
-               <p> Frequency</p>
-               <input type="range" min="1" max="100" value="50" class="slider" id="frequency2">
-               <p>Value: <span id="value5"></span></p>
-            </div>
-            <a href="" class="btn">Add Signal</a>
-        </div>
-        <div class="box box-b">
-                <a href="" class="btn">Remove Signal</a>
-        </div>
-
-        <div class="box box-c">
-            <div class="slider-container">
-               <p> SNR Ratio </p>
-               <input type="range" min="1" max="100" value="50" class="slider" id="noise">
-               <p>Value: <span id="value6"></span></p>
-            </div>
-            <a href="" class="btn">Add Noise</a>
-        </div>
-
-       <header class="plotting">
-            <canvas class="canvas" id="canvas-2" ></canvas>
-       </header>
     </section>
 
 
