@@ -1,8 +1,6 @@
-import numpy
 import numpy as np
 from flask import Flask, request, render_template
 from flask_cors import CORS
-from scipy import signal
 
 # Create flask application
 app = Flask(__name__)
@@ -19,6 +17,7 @@ cors = CORS(app, resources={
 #                                   Global Variables
 # --------------------------------------------------------------------------------------#
 pi = 22 / 7
+
 
 # --------------------------------------------------------------------------------------#
 #                                   Helper Functions
@@ -48,28 +47,27 @@ def generate_signal():
     # get up parameters for signal generation
 
     freq = float(request.values['frequency'])  # get frequency from request & cast it to float
-    amp = float(request.values['amplitude'])   # get amplitude from request & cast it to float
-    signal_amp_type = request.values['type']       # get signal type (sine or cosine) from request
+    amp = float(request.values['amplitude'])  # get amplitude from request & cast it to float
+    signal_type = request.values['type']  # get signal type (sine or cosine) from request
 
     # generate time for signal generation
     time = np.arange(0, 5, 0.01)
 
-    if signal_amp_type == 'sine':
-        signal_values = amp * np.sin(2 * pi * freq * time)  # generate the sine signal values
-    elif signal_amp_type == 'cosine':
-        signal_values = amp * np.cos(2 * pi * freq * time)  # generate the cosine signal values
+    if signal_type == 'sine':
+        signal_y_values = amp * np.sin(2 * pi * freq * time)  # generate the sine signal values
+    elif signal_type == 'cosine':
+        signal_y_values = amp * np.cos(2 * pi * freq * time)  # generate the cosine signal values
     else:
         return 'invalid signal type'  # invalid request
 
     # set up the returned values before return
-    returned_signal = list(time), list(signal_values)
+    returned_signal = list(time), list(signal_y_values)
 
     return list(returned_signal)
 
 
 @app.route('/sample-signal', methods=['POST'])
 def sample_signal():
-
     # get up parameters for signal sampling
 
     # get time values from request & cast it to float
@@ -92,7 +90,6 @@ def sample_signal():
 
 @app.route('/add-signals', methods=['POST'])
 def add_signal():
-
     # get up parameters for signal adding #
 
     # get amplitude of first signal from request & cast it to float array
@@ -101,8 +98,8 @@ def add_signal():
     # get amplitude of second signal from request & cast it to float array
     signal_2_amp = [float(x) for x in request.form.getlist('signal2[]')]
 
-    signal_1_amp_np_array = np.array(signal_1_amp)      # convert python list to np array for easy adding amplitude
-    signal_2_amp_np_array = np.array(signal_2_amp)      # convert python list to np array for easy adding amplitude
+    signal_1_amp_np_array = np.array(signal_1_amp)  # convert python list to np array for easy adding amplitude
+    signal_2_amp_np_array = np.array(signal_2_amp)  # convert python list to np array for easy adding amplitude
 
     # add the signals
     added_signal = signal_1_amp_np_array + signal_2_amp_np_array
@@ -112,7 +109,6 @@ def add_signal():
 
 @app.route('/subtract-signals', methods=['POST'])
 def subtract_signal():
-
     # get up parameters for signal subtraction #
 
     # get amplitude of first signal from request & cast it to float array
@@ -121,13 +117,40 @@ def subtract_signal():
     # get amplitude of second signal from request & cast it to float array
     signal_to_be_subtracted = [float(x) for x in request.form.getlist('signal2[]')]
 
-    signal_1_amp_np_array = np.array(signal_main)                  # convert python list to np array for easy subtracting amplitude
-    signal_2_amp_np_array = np.array(signal_to_be_subtracted)      # convert python list to np array for easy subtracting amplitude
+    signal_1_amp_np_array = np.array(signal_main)  # convert python list to np array for easy subtracting amplitude
+    signal_2_amp_np_array = np.array(
+        signal_to_be_subtracted)  # convert python list to np array for easy subtracting amplitude
 
     # subtract the signal
     subtracted_signal = signal_1_amp_np_array - signal_2_amp_np_array
 
     return list(subtracted_signal)
+
+
+@app.route('/add-noise', methods=['POST'])
+def add_noise():
+
+    #  get time and cast it to float
+    time = [float(i) for i in request.form.getlist('time[]')]
+
+    # get signal and cast it to float
+    signal = [float(i) for i in request.form.getlist('signal[]')]
+
+    # get signal-to-noise ratio and cast it to float
+    signal_to_noise_ratio = float(request.values['SNR'])
+
+    signal_np = np.array(signal)     # convert python list to numpy array
+
+    initial_noise = np.random.uniform(low=0, high=1, size=len(time))  # generate noise
+
+    # get A factor as SNR = signal power/ A * noise power
+    # signal power = signal values ^2, noise power = noise values ^2
+    a_factor = (np.mean(signal_np**2)) / (signal_to_noise_ratio * np.mean(np.square(initial_noise)))
+
+    final_noise = a_factor * initial_noise          # the signal according to the SNR
+    signal_with_noise = signal + final_noise        # add noise
+
+    return list(signal_with_noise)
 
 # --------------------------------------------------------------------------------------#
 #                                       Run App
@@ -136,5 +159,3 @@ def subtract_signal():
 
 if __name__ == "__main__":
     app.run(debug=True, port='5002')
-
-
