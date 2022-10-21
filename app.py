@@ -152,6 +152,26 @@ def add_noise():
 
     return list(signal_with_noise)
 
+
+@app.route('/reconstruct-signal', methods=['POST'])
+def signal_reconstruction():
+    sampled_signal = [float(i) for i in request.form.getlist('sampledSignal[]')]
+    sampled_frequency = float(request.values['sampledSignalFrequency'])
+
+    time = np.arange(0, 5, 0.01)
+    T_sampled = 1/sampled_frequency
+    t_sampled = np.arange(0, 5, T_sampled)
+
+    samples = len(t_sampled)
+
+    x1reconstructed = np.zeros(len(time))
+
+    for i in range(1, len(time)):
+        for n in range(1, samples):
+            x1reconstructed[i] = x1reconstructed[i] + sampled_signal[n] * np.sinc((time[i] - n * T_sampled) / T_sampled)
+
+    return list(x1reconstructed)
+
 # --------------------------------------------------------------------------------------#
 #                                       Run App
 # --------------------------------------------------------------------------------------#
