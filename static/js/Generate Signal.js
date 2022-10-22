@@ -9,14 +9,18 @@ class GenerateSignal {
         this.amp = 0;
         /** initial amplitude = 0 **/
         this.type = 'sine'      /** initial signal type -> sine wave **/
+        this.samplingFrequency = 0;
+
+        this.xData = []
+        this.yData = []
 
         /**
          * Plotting Configurations
          * **/
         this.data = [
             {
-                x: [0],
-                y: [0],
+                x: this.xData,
+                y: this.yData,
                 mode: "lines",
                 type: "scatter"
             }
@@ -38,8 +42,7 @@ class GenerateSignal {
         this.freq = frequency;
         this.amp = amplitude;
         this.type = type;
-        let xdata = [];
-        let ydata = [];
+        let xData, yData
 
         /**
          *  ajax call to retrieve data from the server
@@ -50,43 +53,49 @@ class GenerateSignal {
          *  res[0] -> time array
          *  res[1] -> values array
          * **/
+
         $.ajax({
             method: 'POST',
-            url: 'http://127.0.0.1:5001/generate-signal',
+            url: 'http://127.0.0.1:5002/generate-signal',
             dataType: 'json',
+            async: false,
             data: {
                 type: type,
                 frequency: frequency,
                 amplitude: amplitude,
             },
             success: function (res, status, xhr) {
-                xdata = res[0];
-                ydata = res[1];
+                xData = res[0];
+                yData = res[1];
             }
         });
 
-        /**   setting data to the plotting library  **/
+        this.xData = xData;
+        this.yData = yData;
+
         this.data = [
             {
-                x: xdata,
-                y: ydata,
+                x: this.xData,
+                y: this.yData,
                 mode: "lines",
                 type: "scatter"
             }
-        ];
+        ]
+
         return this.data;
     }
 
-    plot(amplitude, frequency, type) {
+    plot(amplitude, frequency, type, div) {
 
         /**   generate new signal  **/
         const data = this.constructNewSignal(amplitude, frequency, type);
 
+
         /**  plot this signal   **/
-        Plotly.newPlot("plot1", data, this.layout, this.config);
+        Plotly.newPlot(div, data, this.layout, this.config);
     }
 
-    async change_amplitude(amplitude) {
+    async changeAmplitude(amplitude) {
         this.amp = amplitude
 
         /**  generate new signal with the new amplitude   **/
@@ -127,7 +136,7 @@ class GenerateSignal {
 
     }
 
-    async change_frequency(frequency) {
+    async changeFrequency(frequency) {
         this.freq = frequency
 
         /**  generate new signal with the new frequency   **/
@@ -174,7 +183,7 @@ class GenerateSignal {
     sampleSignal(rateOfSampling) {
         let sampledX = [];
         let sampledY = [];
-
+        this.samplingFrequency = rateOfSampling;
         /**
          *  ajax call to retrieve sampled data from the server
          *  method -> post
@@ -184,14 +193,16 @@ class GenerateSignal {
          *  res[0] -> samples time array
          *  res[1] -> sampled values array
          * **/
+
         $.ajax({
             method: 'POST',
-            url: 'http://127.0.0.1:5001/sample-signal',
+            url: 'http://127.0.0.1:5002/sample-signal',
             dataType: 'json',
+            async: false,
             data: {
-                type: this.type,
-                xdata: this.data.x,
-                ydata: this.data.y,
+                time: this.xData,
+                values: this.yData,
+                samplingFrequency: this.samplingFrequency,
             },
             success: function (res, status, xhr) {
                 sampledX = res[0];
