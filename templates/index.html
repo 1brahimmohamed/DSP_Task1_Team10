@@ -23,30 +23,30 @@
         <div class="panel-heading">
             <ul class="nav nav-tabs">
                 <li class="active" id="home-tab"><a>Home</a></li>
-                <li id="reconstruction-tab"><a>Signal Reconstruction</a></li>
+                <li id="reconstruction-tab"><a>Signal Info</a></li>
             </ul>
         </div>
         <div class="panel-body">
             <div class="tab-content">
                 <div class="tab-pane fade in active" id="home-body">
-                    <button class="btn">New</button>
-                    <button class="btn">Upload</button>
-                    <button class="btn">Save</button>
+                    <button class="btn" id="generate">New</button>
+                    <button class="btn" id="open">Upload</button>
+                    <button class="btn" id="save">Save</button>
                 </div>
                 <div class="tab-pane fade in tab " id="reconstruction-body">
                     <!--                            <button class="btn">Save</button>-->
                     <form class="form-inline">
                         <div class="form-group">
-                            <input type="email" class="form-control" id="frequency" placeholder="Frequency">
+                            <input type="number" class="form-control" id="frequency" placeholder="Frequency">
                         </div>
                         <div class="form-group">
-                            <input type="email" class="form-control" id="amplitude" placeholder="Amplitude">
+                            <input type="number" class="form-control" id="amplitude" placeholder="Amplitude">
                         </div>
                         <div class="form-group">
-                            <input type="password" class="form-control" id="sample" placeholder="Sample Rate">
+                            <input type="number" class="form-control" id="sample" placeholder="Sample Rate">
                         </div>
-                        <div>
-                            <button type="submit" class="btn">Reconstruct</button>
+                        <div class="form-group">
+                            <button class="btn">Reconstruct</button>
                         </div>
                     </form>
                 </div>
@@ -63,19 +63,8 @@
                     <th>Name</th>
                     <th>Frequency</th>
                     <th>Amplitude</th>
-
+                    <th>Type</th>
                 </tr>
-                <tr>
-                    <td>Signal 1</td>
-                    <td>Hz</td>
-                    <td>0</td>
-                </tr>
-                <tr>
-                    <td>Signal 2</td>
-                    <td>Hz</td>
-                    <td>0</td>
-                </tr>
-
             </table>
 <!--            <a href="" class="btn">Add</a>-->
 

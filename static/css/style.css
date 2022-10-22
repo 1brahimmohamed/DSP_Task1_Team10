@@ -100,6 +100,7 @@ body {
     box-shadow: var(--shadow);
     padding: 1.5rem;
     max-height: 500px;
+    min-height: 50%;
     overflow-y: auto;
 }
 
@@ -112,6 +113,11 @@ body {
     grid-area: box-b;
 }
 
+
+.selected {
+    background-color: #6e6e6e;
+    color: #d9d9d9;
+}
 
 .slider-container {
     width: 100%;
@@ -171,9 +177,9 @@ body {
     font-size: 14px;
 }
 
-.signal-table tr:nth-child(even) {
-    background-color: #f2f2f2;
-}
+/*.signal-table tr:nth-child(even) {*/
+/*    background-color: #f2f2f2;*/
+/*}*/
 
 .signal-table tr:hover {
     background-color: #ddd;

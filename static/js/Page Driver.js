@@ -40,22 +40,75 @@ reconstructionTab.onclick = function () {
 }
 
 /**************************************************************************************
- *                                  Upper Bar Handler
+ *                                  Signal Generation
  **************************************************************************************/
 
+let generateBtn = document.getElementById('generate'),
+    signals = [],
+    selectedUp,
+    i = 0;
 
-let sin_wave = new GenerateSignal();
-sin_wave.plot(10, 0.5, 'sine', 'canvas-1');
+generateBtn.onclick = function () {
+    let signal,
+        freq, amp, type
+    if (i%2 === 0){
+        signal = new GenerateSignal();
+        amp = 4
+        freq = 2
+        type = 'sine'
+    }
+    else{
+        signal = new GenerateSignal();
+        amp = 5
+        freq = 5
+        type = 'cosine'
+    }
+    i++
+    signal.plot(amp, freq, type, 'canvas-1');
 
-Plotly.newPlot('canvas-2',
-    [
-        {
-            x: [0],
-            y: [0]
-        }
-        ],
-    {
-        yaxis: {
-            range: [-11, 11]
-        }
-    })
+    let item = document.createElement('tr');
+    item.innerHTML = `
+                    <td>Signal ${signals.length}</td>
+                    <td>${freq} Hz</td>
+                    <td>${amp}</td>
+                    <td>${type}</td>
+
+    `
+    document.getElementById('signals').appendChild(item)
+    signals.push(signal)
+    rowSelector()
+}
+
+
+// Plotly.newPlot('canvas-2',
+//     [
+//         {
+//             x: [0],
+//             y: [0]
+//         }
+//         ],
+//     {
+//         yaxis: {
+//             range: [-11, 11]
+//         }
+//     })
+
+let samplingInput = document.getElementById('sample');
+samplingInput.onclick = function () {
+    let samplingRate = samplingInput.value
+    if (samplingRate !== 0)
+        signals[0].sampleSignal(samplingRate)
+}
+
+
+function rowSelector(){
+    $(".signal-table tr").click(function () {
+        $(this).addClass('selected').siblings().removeClass('selected');
+        selectedUp = $(this).index() - 1
+
+        let barValues = $(".form-inline div").children()
+        barValues[2].value = signals[selectedUp].samplingFrequency
+        barValues[1].value = signals[selectedUp].amp
+        barValues[0].value = signals[selectedUp].freq
+    });
+}

@@ -27,7 +27,9 @@ class GenerateSignal {
         ];
 
         this.config = {
-            responsive: true
+            responsive: true,
+            editable: true,
+            displaylogo: false
         };
 
         this.layout = {
@@ -144,7 +146,7 @@ class GenerateSignal {
 
         /**  set layout   **/
         let layout = {
-            title: "Signal displayed here",
+            title: "Sampled Signal",
             font: {
                 size: 18
             },
@@ -210,36 +212,47 @@ class GenerateSignal {
             }
         });
 
-        let data = [
-            {
-                x: sampledX,
-                y: sampledY,
-                type: "line",
-                mode: 'markers'
-            }
-        ]
-
-        /**  set layout   **/
-        let layout = {
-            title: "Signal displayed here",
-            font: {
-                size: 18
-            },
-            yaxis: {
-                range: [-11, 11]
-            },
-            xaxis: {
-                range: [0, 6]
-            }
+        let trace0 = {
+            type: "scatter",
+            mode: "lines",
+            name: 'Signal',
+            x: this.xData,
+            y: this.yData,
+            line: {color: '#2d7fb8'}
         }
 
+
+        let trace1 = {
+            type: "line",
+            mode: 'markers',
+            name: 'Sampled',
+            x: sampledX,
+            y: sampledY,
+            line: {color: '#ff01a2'}
+        }
+
+        let data = [trace0,trace1]
+
+        /**  set layout   **/
+        // let layout = {
+        //     title: "Signal displayed here",
+        //     font: {
+        //         size: 12
+        //     },
+        //     yaxis: {
+        //         range: [-10, 10]
+        //     },
+        //     xaxis: {
+        //         range: [0, 6]
+        //     }
+        // }
+
         /**   plot the new signal  **/
-        Plotly.animate(
-            "plot2",
+        Plotly.react(
+            "canvas-1",
             {
-                layout: layout,
-                data: data,
-                traces: [0]
+                layout: this.layout,
+                data: [trace0,trace1],
 
             },
             {
@@ -253,5 +266,6 @@ class GenerateSignal {
             },
             this.config
         );
+
     }
 }
