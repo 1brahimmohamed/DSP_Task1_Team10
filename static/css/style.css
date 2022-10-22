@@ -66,13 +66,13 @@ body {
     display: grid;
     grid-gap: 15px;
     grid-template-areas:
-          'box-a plotting'
-          'box-b plotting'
+          'box-a plotting plotting plotting plotting plotting plotting plotting plotting plotting plotting plotting plotting plotting plotting'
+          'box-b plotting plotting plotting plotting plotting plotting plotting plotting plotting plotting plotting plotting plotting plotting'
 }
 
 .plotting {
     grid-area: plotting;
-    height: 77vh;
+    height: 75vh;
     min-height: 400px;
     background-color: #F5F5F5;
     padding: 1rem;
@@ -192,7 +192,9 @@ body {
     background-color: #0076A7;
     color: white;
 }
-
+.signal-table tr.selected{
+    background-color: #6e6e6e;
+}
 .panel.panel-primary {
     border-color: #e9e9e9;
     box-shadow: var(--shadow);
