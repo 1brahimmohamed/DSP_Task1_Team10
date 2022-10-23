@@ -119,6 +119,18 @@ body {
     color: #d9d9d9;
 }
 
+#current-components{
+    display: block;
+    width: 95%;
+    border: none;
+    background-color: #004072;
+    color: #ffffff;
+    border-radius: 0.1rem;
+    text-align: center;
+    padding: 0.5rem;
+    font-weight: bold;
+}
+
 .slider-container {
     width: 100%;
     padding-right: 1rem;
