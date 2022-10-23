@@ -18,18 +18,19 @@ body {
 }
 
 .btn {
-    background: #08609d;
+    background-color: #004073;
     border-radius: 4px;
     color: var(--light);
     padding: 0.6rem 1.3rem;
     text-decoration: none;
     border: 0;
-    opacity: 0.8;
+    opacity: 1;
     margin-top: 10px;
 }
 
 .btn:hover {
-    opacity: 1;
+    opacity: 0.8;
+    var(--light);
 }
 
 
@@ -64,7 +65,7 @@ body {
 
 .main-body {
     display: grid;
-    grid-gap: 15px;
+    grid-gap: 10px;
     grid-template-areas:
           'box-a plotting plotting plotting plotting plotting plotting plotting plotting plotting plotting plotting plotting plotting plotting'
           'box-b plotting plotting plotting plotting plotting plotting plotting plotting plotting plotting plotting plotting plotting plotting'
@@ -95,7 +96,6 @@ body {
     background: #F5F5F5;
     font-size: 14px;
     display: grid;
-    align-items: center;
     justify-items: center;
     box-shadow: var(--shadow);
     padding: 1.5rem;
@@ -106,10 +106,14 @@ body {
 
 
 .box-a {
+    horiz-align: center;
+    vert-align: top;
     grid-area: box-a;
+    min-height: 220px;
 }
 
 .box-b {
+    align-items: center;
     grid-area: box-b;
 }
 
@@ -121,11 +125,11 @@ body {
 
 #current-components{
     display: block;
-    width: 95%;
+    width: 100%;
     border: none;
-    background-color: #004072;
+    border-radius: 4px;
+    background-color: #004073;
     color: #ffffff;
-    border-radius: 0.1rem;
     text-align: center;
     padding: 0.5rem;
     font-weight: bold;
@@ -133,11 +137,11 @@ body {
 
 .slider-container {
     width: 100%;
-    padding-right: 1rem;
-    padding-left: 1rem;
+    margin: 20px;
 }
 
 .slider-container p {
+    margin-top: 10px;
     font-weight: bold;
     text-align: center;
 }
@@ -160,7 +164,7 @@ body {
     width: 25px;
     height: 25px;
     border-radius: 50%;
-    background: #0076A7;
+    background: #004073;
     cursor: pointer;
 }
 
@@ -168,7 +172,7 @@ body {
     width: 25px;
     height: 25px;
     border-radius: 50%;
-    background: #0076A7;
+    background: #004073;
     cursor: pointer;
 }
 
@@ -189,6 +193,49 @@ body {
     font-size: 14px;
 }
 
+#generate:hover{
+    color: white;
+}
+#add:hover{
+    color: white;
+}
+#remove-signal:hover{
+    color: white;
+}
+#save:hover{
+    color: white;
+}
+#upload:hover{
+    color: white;
+}
+
+
+.options{
+    text-align: center;
+    width: 100%;
+    margin-bottom: -5px;
+    font-size: medium;
+    font-weight: bolder;
+}
+.info{
+    text-align: center;
+    width: 100%;
+    font-size: medium;
+    font-weight: bolder;
+}
+.table{
+    width: 100%;
+}
+.controls{
+     width: 30%;
+    float: left;
+    padding: 5px;
+}
+.controls1{
+    width: 70%;
+    float: left;
+    padding: 5px;
+}
 /*.signal-table tr:nth-child(even) {*/
 /*    background-color: #f2f2f2;*/
 /*}*/
@@ -201,9 +248,10 @@ body {
     padding-top: 12px;
     padding-bottom: 12px;
     text-align: center;
-    background-color: #0076A7;
+    background-color: #004073;
     color: white;
 }
+
 .signal-table tr.selected{
     background-color: #6e6e6e;
 }

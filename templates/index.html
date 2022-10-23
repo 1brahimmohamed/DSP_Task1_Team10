@@ -33,7 +33,7 @@
                 <div class="tab-pane fade in active" id="home-body">
                     <button class="btn" id="generate">Generate Signal</button>
                     <input type="file" id="selectedFile" style="display: none;" />
-                    <input class="btn" type="button" value="Upload" onclick="document.getElementById('selectedFile').click();" />
+                    <input class="btn" type="button" id="upload" value="Upload" onclick="document.getElementById('selectedFile').click();" />
                     <a id="download-redirect"><button class="btn" id="save">Save</button></a>
                 </div>
                 <div class="tab-pane fade in tab " id="reconstruction-body">
@@ -67,25 +67,34 @@
 <div class="base">
     <section class="main-body">
         <div class="box box-a">
-            <h5>Signal Info</h5>
-            <table class="signal-table" id="signals" >
+            <div class="info">
+                <p>Signal Info</p>
+                <table class="signal-table" id="signals" >
                 <tr>
                     <th>Name</th>
                     <th>Frequency</th>
                     <th>Amplitude</th>
                     <th>Type</th>
                 </tr>
-            </table>
+                </table>
+            </div>
+
 
         </div>
         <div class="box box-b">
-            <h5>Advanced Options</h5>
+            <div class="options">
+                <p>Advanced Options</p>
+            </div>
             <select id="current-components">
-                <option value="" disabled selected>Current Signal Components</option>            </select>
-
-            <input class="form-control" type="number" id="noise">
-            <a class="btn" id="add-noise-btn"> Add Noise</a>
+                <option value="" disabled selected>Current Signal Components</option>
+            </select>
             <a class="btn " id="remove-signal">Remove</a>
+
+            <div class="slider-container">
+               <p>SNR Ratio</p>
+              <input type="range" min="1" max="100" value="50" class="slider" id="myRange">
+              <p>Value: <span id="demo"></span></p>
+            </div>
         </div>
         <div class="plotting">
             <div class="canvas" id="canvas-1"></div>
