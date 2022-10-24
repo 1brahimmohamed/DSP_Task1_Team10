@@ -61,7 +61,7 @@ let frequencyInputField = document.getElementById('frequency'),
     amplitudeInputField = document.getElementById('amplitude'),
     typeInputField = document.getElementById('type'),
     samplingRateInputField = document.getElementById('sample'),
-    noiseInputField = document.getElementById('noise')
+    noiseInputField = document.getElementById('myRange')
 
 /**    tables     **/
 let signalsTable = document.getElementById('signals')

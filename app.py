@@ -51,7 +51,7 @@ def generate_signal():
     signal_type = request.values['type']  # get signal type (sine or cosine) from request
 
     # generate time for signal generation
-    time = np.arange(0, 5, 0.01)
+    time = np.arange(0, 5, 0.001)
 
     if signal_type == 'sine':
         signal_y_values = amp * np.sin(2 * pi * freq * time)  # generate the sine signal values
@@ -118,8 +118,7 @@ def subtract_signal():
     signal_to_be_subtracted = [float(x) for x in request.form.getlist('signal2[]')]
 
     signal_1_amp_np_array = np.array(signal_main)  # convert python list to np array for easy subtracting amplitude
-    signal_2_amp_np_array = np.array(
-        signal_to_be_subtracted)  # convert python list to np array for easy subtracting amplitude
+    signal_2_amp_np_array = np.array(signal_to_be_subtracted)  # convert python list to np array for easy subtracting amplitude
 
     # subtract the signal
     subtracted_signal = signal_1_amp_np_array - signal_2_amp_np_array
@@ -158,7 +157,7 @@ def signal_reconstruction():
     sampled_signal = [float(i) for i in request.form.getlist('sampledSignal[]')]
     sampled_frequency = float(request.values['sampledSignalFrequency'])
 
-    time = np.arange(0, 5, 0.01)
+    time = np.arange(0, 5, 0.001)
     T_sampled = 1/sampled_frequency
     t_sampled = np.arange(0, 5, T_sampled)
 

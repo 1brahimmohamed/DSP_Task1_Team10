@@ -372,8 +372,8 @@ class GenerateSignal {
             async: false,
             dataType: 'json',
             data: {
-                signal1: deleted[0].y,
-                signal2: this.data[0].y,
+                signal1: this.data[0].y,
+                signal2: deleted[0].y,
             },
             success: function (res, status, xhr) {
                 subtractionResult = res;
@@ -390,6 +390,7 @@ class GenerateSignal {
         let keys = Object.keys(file[0])
 
         /** map through the file to extract values of the file **/
+
         file.map((d) => {
             time.push(d[keys[0]])
             values.push(d[keys[1]])
