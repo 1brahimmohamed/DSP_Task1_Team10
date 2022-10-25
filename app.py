@@ -13,11 +13,6 @@ cors = CORS(app, resources={
     }
 })
 
-# --------------------------------------------------------------------------------------#
-#                                   Global Variables
-# --------------------------------------------------------------------------------------#
-pi = 22 / 7
-
 
 # --------------------------------------------------------------------------------------#
 #                                   Helper Functions
@@ -54,9 +49,9 @@ def generate_signal():
     time = np.arange(0, 5, 0.001)
 
     if signal_type == 'sine':
-        signal_y_values = amp * np.sin(2 * pi * freq * time)  # generate the sine signal values
+        signal_y_values = amp * np.sin(2 * np.pi * freq * time)  # generate the sine signal values
     elif signal_type == 'cosine':
-        signal_y_values = amp * np.cos(2 * pi * freq * time)  # generate the cosine signal values
+        signal_y_values = amp * np.cos(2 * np.pi * freq * time)  # generate the cosine signal values
     else:
         return 'invalid signal type'  # invalid request
 
@@ -158,7 +153,7 @@ def signal_reconstruction():
     sampled_frequency = float(request.values['sampledSignalFrequency'])
 
     time = np.arange(0, 5, 0.001)
-    T_sampled = 1/sampled_frequency
+    T_sampled = (1/sampled_frequency)
     t_sampled = np.arange(0, 5, T_sampled)
 
     samples = len(t_sampled)

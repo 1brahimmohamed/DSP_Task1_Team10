@@ -50,7 +50,8 @@ let generateBtn = document.getElementById('add'),
     uploadBtn = document.getElementById('selectedFile'),
     saveBtn = document.getElementById('save'),
     removeSignalBtn = document.getElementById('remove-signal'),
-    redirect = document.getElementById('download-redirect')
+    redirect = document.getElementById('download-redirect'),
+    randomSignal = document.getElementById('generate-random')
 
 /**     Combo Boxes  **/
 let signalsComboBox = document.getElementById('current-components')
@@ -63,14 +64,56 @@ let frequencyInputField = document.getElementById('frequency'),
     samplingRateInputField = document.getElementById('sample'),
     noiseInputField = document.getElementById('myRange')
 
-/**    tables     **/
+/**    Tables     **/
 let signalsTable = document.getElementById('signals')
 
-
+/**    Text     **/
+let snrValueText = document.getElementById('snr-value-text')
 
 /**************************************************************************************
  *                             Event Handlers (On Button Click)
  **************************************************************************************/
+
+async function generateSignal(freq, amp, type, sampFreq){
+
+    // generate signal
+    signal.addSignals(amp, freq, type, sampFreq);
+    signal.samplingFrequency = sampFreq
+
+    let signalCount = signal.signalsCount
+    let item = document.createElement('tr');
+    item.setAttribute('id', `Signal${signalCount}`);
+    item.innerHTML = `
+                    <td>Signal ${signalCount}</td>
+                    <td>${freq} Hz</td>
+                    <td>${amp}</td>
+                    <td>${type}</td>
+    `
+    signalsTable.appendChild(item)
+
+    if (noiseInputField.value < 100) {
+        signal.addNoise(noiseInputField.value);
+        signal.motionPlot("canvas-1", signal.noiseData);
+        await signal.motionPlot("canvas-1", signal.noiseData);
+        signal.sampleSignal(sampFreq, signal.noiseData);
+    } else {
+        signal.motionPlot("canvas-1", signal.data);         // plot signal
+        await signal.motionPlot("canvas-1", signal.data);   // animate plot
+        signal.sampleSignal(sampFreq);                             // sample the signal
+    }
+
+    signal.updateCanvas2(sampFreq);             // update down plot
+
+    let option = document.createElement("option");
+    option.text = ` (Signal${signalCount}) \t Frequency= ${freq}, Amplitude= ${amp}`
+    option.value = `Signal${signalCount}`
+    signalsComboBox.appendChild(option);
+
+}
+
+/**
+ *
+ * **/
 
 // Generate Signal Button
 generateBtn.onclick = async function () {
@@ -97,48 +140,14 @@ generateBtn.onclick = async function () {
         if (sampFreq === '')
             sampFreq = 2 * frequencyInputField.value
 
-
-        // generate signal
-        signal.addSignals(amplitudeInputField.value, frequencyInputField.value, type, sampFreq);
-        signal.samplingFrequency = sampFreq
-
-        let signalCount = signal.signalsCount
-        let item = document.createElement('tr');
-        item.setAttribute('id', `signal-table${signalCount}`);
-        item.innerHTML = `
-                    <td>Signal ${signalCount}</td>
-                    <td>${frequencyInputField.value} Hz</td>
-                    <td>${amplitudeInputField.value}</td>
-                    <td>${type}</td>
-    `
-        signalsTable.appendChild(item)
-
-        if (noiseInputField.value !== '') {
-            signal.addNoise(noiseInputField.value);
-            signal.motionPlot("canvas-1", signal.noiseData);
-            await signal.motionPlot("canvas-1", signal.noiseData);
-            signal.sampleSignal(samplingRateInputField.value, signal.noiseData);
-        } else {
-            signal.motionPlot("canvas-1", signal.data);         // plot signal
-            await signal.motionPlot("canvas-1", signal.data);   // animate plot
-            signal.sampleSignal(sampFreq);                             // sample the signal
-        }
-
-        signal.UpdateCanvas2(sampFreq);             // update down plot
-
-        let option = document.createElement("option");
-        option.text = ` (Signal${signalCount}) \t Amplitude= ${amplitudeInputField.value}, Frequency= ${frequencyInputField.value}`
-        option.value = `Signal${signalCount}`
-        signalsComboBox.appendChild(option);
-
-
+        await generateSignal(frequencyInputField.value, amplitudeInputField.value, type, sampFreq)
     }
 
 };
 
 saveBtn.onclick = ()=>{
     let myCSVObject = []
-    if (noiseInputField.checked) {
+    if (noiseInputField.value < 100) {
         myCSVObject = signal.exportSignalToCSV(signal.noiseData[0].x, signal.noiseData[0].y)
     }
     else{
@@ -155,14 +164,12 @@ saveBtn.onclick = ()=>{
 }
 
 removeSignalBtn.onclick = async () => {
-    console.log('gowa')
     signal.deleteSignal(signalsComboBox.value);
 
-    // let removed = document.getElementById(`signal-table${signalsComboBox.selectedIndex}`)
-    // console.log(signalsComboBox.selectedIndex)
-    // removed.remove()
+    let removed = document.getElementById(signalsComboBox.value)
+    removed.remove()
 
-    if (noiseInputField.value > 0) {
+    if (noiseInputField.value < 100) {
         signal.addNoise(noiseInputField.value);
         signal.motionPlot("canvas-1", signal.noiseData);
         await signal.motionPlot("canvas-1", signal.noiseData);
@@ -173,8 +180,17 @@ removeSignalBtn.onclick = async () => {
         signal.sampleSignal(samplingRateInputField.value);
 
     }
-    signal.UpdateCanvas2(samplingRateInputField.value);
+    signal.updateCanvas2(samplingRateInputField.value);
     signalsComboBox.remove(signalsComboBox.selectedIndex)
+}
+
+randomSignal.onclick = async function (){
+        let randFreq = Math.floor(Math.random() * (5 - 1) + 1),
+            randAmp = Math.floor(Math.random() * (10 - 1) + 1),
+            randType = 'sine',
+            randSampFreq = 2*randFreq + 1;
+
+        await generateSignal(randFreq, randAmp, randType, randSampFreq)
 }
 
 /**************************************************************************************
@@ -183,8 +199,11 @@ removeSignalBtn.onclick = async () => {
 
 uploadBtn.oninput = function (event) {
     let sampFreq = samplingRateInputField.value
-    if (sampFreq === '')
-        sampFreq = 0
+    if (sampFreq === ''){
+        sampFreq = 10
+        samplingRateInputField.value = sampFreq
+    }
+
     let file = event.target.files[0],
         fileReader = new FileReader();
 
@@ -201,7 +220,7 @@ uploadBtn.oninput = function (event) {
         signal.motionPlot('canvas-1', signal.data)
         await signal.motionPlot('canvas-1', signal.data)
         signal.sampleSignal(sampFreq)
-        signal.UpdateCanvas2(sampFreq)
+        signal.updateCanvas2(sampFreq)
 
         let item = document.createElement('tr');
         item.setAttribute('id', `signal-table${signal.signalsCount}`);
@@ -218,15 +237,27 @@ uploadBtn.oninput = function (event) {
 
 samplingRateInputField.onchange =  async function () {
     let samplingRate = samplingRateInputField.value;
-    if(noiseInputField.value > 1){
-        //recalculate the signal
-        signal.sampleSignal(samplingRate, signal.noiseData);
-    } else {
-        signal.sampleSignal(samplingRate);
+    if (signal.signalsCount !== 0){
+        if(noiseInputField.value < 100){
+            //recalculate the signal
+            signal.sampleSignal(samplingRate, signal.noiseData);
+        } else {
+            signal.sampleSignal(samplingRate);
+        }
+        signal.updateCanvas2(samplingRate);
     }
-    signal.UpdateCanvas2(samplingRate);
 };
 
+noiseInputField.onmouseup = function() {
+    signal.addNoise(noiseInputField.value);
+    signal.plotNoise();
+    signal.sampleSignal(noiseInputField.value, signal.noiseData);
+    signal.updateCanvas2(noiseInputField.value);
+};
+
+noiseInputField.onchange = function (){
+    snrValueText.innerHTML = noiseInputField.value;
+}
 
 /**************************************************************************************
  *                       Application Logic (App Starts Here)

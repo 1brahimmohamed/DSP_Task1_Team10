@@ -196,7 +196,6 @@ class GenerateSignal {
     }
 
     addNoise(SNR) {
-
         if (SNR >= 0) {
             let noiseData;
             this.noiseData[0].x = this.data[0].x
@@ -218,7 +217,7 @@ class GenerateSignal {
                 data: {
                     time: this.data[0].x,
                     signal: this.data[0].y,
-                    SNR: 5
+                    SNR: SNR
                 },
                 success: function (res, status, xhr) {
                     noiseData = res;
@@ -227,7 +226,9 @@ class GenerateSignal {
 
             /**  set the noise data to the data coming from the server   */
             this.noiseData[0].x = this.data[0].x
-            this.noiseData[0].y = this.data[0].y
+            this.noiseData[0].y = noiseData
+
+
         }
     }
 
@@ -271,7 +272,7 @@ class GenerateSignal {
         this.reconstructedData[0].y = reconstructedY
     }
 
-    UpdateCanvas2(rateOfSampling) {
+    updateCanvas2(rateOfSampling) {
 
         /** reconstruct signal with the new sampling rate   **/
         this.reconstructSignal(rateOfSampling)
