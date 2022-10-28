@@ -8,8 +8,8 @@ class GenerateSignal {
         /** initial frequency = 0 **/
         this.amp = 0;
         /** initial amplitude = 0 **/
-        this.type = 'sine'
-        /** initial signal type -> sine wave **/
+        this.type = 'sin'
+        /** initial signal type -> sin wave **/
         this.samplingFrequency = 0;
 
         /** Signal X,Y Values **/
@@ -86,7 +86,7 @@ class GenerateSignal {
         };
     }
 
-    constructNewSignal(amplitude, frequency, type = 'sine') {
+    constructNewSignal(amplitude, frequency, type = 'sin') {
 
         /**  empty string for expression to be expressed  **/
         this.freq = frequency;
@@ -383,6 +383,7 @@ class GenerateSignal {
 
         this.data[0].y = subtractionResult;
         delete this.signalsList[signalName];
+        this.signalsCount--;
     }
 
     openSignalFromPC(file) {

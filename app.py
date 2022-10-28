@@ -43,15 +43,15 @@ def generate_signal():
 
     freq = float(request.values['frequency'])  # get frequency from request & cast it to float
     amp = float(request.values['amplitude'])  # get amplitude from request & cast it to float
-    signal_type = request.values['type']  # get signal type (sine or cosine) from request
+    signal_type = request.values['type']  # get signal type (sin or cos) from request
 
     # generate time for signal generation
-    time = np.arange(0, 5, 0.001)
+    time = np.arange(0, 5, 0.01)
 
-    if signal_type == 'sine':
-        signal_y_values = amp * np.sin(2 * np.pi * freq * time)  # generate the sine signal values
-    elif signal_type == 'cosine':
-        signal_y_values = amp * np.cos(2 * np.pi * freq * time)  # generate the cosine signal values
+    if signal_type == 'sin':
+        signal_y_values = amp * np.sin(2 * np.pi * freq * time)  # generate the sin signal values
+    elif signal_type == 'cos':
+        signal_y_values = amp * np.cos(2 * np.pi * freq * time)  # generate the cos signal values
     else:
         return 'invalid signal type'  # invalid request
 
@@ -71,7 +71,7 @@ def sample_signal():
     # get amplitude from request & cast it to float
     signal_amp_values = [float(x) for x in request.form.getlist('values[]')]
 
-    # get signal type (sine or cosine) from request
+    # get signal type (sin or cos) from request
     sampling_frequency = int(request.values['samplingFrequency'])
 
     # sample the signal
@@ -152,7 +152,7 @@ def signal_reconstruction():
     sampled_signal = [float(i) for i in request.form.getlist('sampledSignal[]')]
     sampled_frequency = float(request.values['sampledSignalFrequency'])
 
-    time = np.arange(0, 5, 0.001)
+    time = np.arange(0, 5, 0.01)
     T_sampled = (1/sampled_frequency)
     t_sampled = np.arange(0, 5, T_sampled)
 
