@@ -20,10 +20,18 @@ cors = CORS(app, resources={
 
 
 def sample(time, amplitude, freq_sample):
+
+    # time list must be equal to amplitude list
     if len(time) == len(amplitude):
+        # get points per time
         points_per_indices = int((len(time) / time[-1]) / freq_sample)
-        amplitude = amplitude[::points_per_indices]
+
+        # extract the sampled time points by taking a value each step ( step point= points_per_indices)
         time = time[::points_per_indices]
+
+        # extract the sampled y points by taking a value each step ( step point= points_per_indices)
+        amplitude = amplitude[::points_per_indices]
+
         return time, amplitude
 
 
@@ -39,15 +47,16 @@ def home():
 
 @app.route('/generate-signal', methods=['POST'])
 def generate_signal():
-    # get up parameters for signal generation
+    # get up parameters from the frontend for signal generation
 
     freq = float(request.values['frequency'])  # get frequency from request & cast it to float
     amp = float(request.values['amplitude'])  # get amplitude from request & cast it to float
     signal_type = request.values['type']  # get signal type (sin or cos) from request
 
     # generate time for signal generation
-    time = np.arange(0, 5, 0.01)
+    time = np.linspace(0, 5, 500)
 
+    # set the signal type
     if signal_type == 'sin':
         signal_y_values = amp * np.sin(2 * np.pi * freq * time)  # generate the sin signal values
     elif signal_type == 'cos':
@@ -63,7 +72,7 @@ def generate_signal():
 
 @app.route('/sample-signal', methods=['POST'])
 def sample_signal():
-    # get up parameters for signal sampling
+    # get up parameters from the frontend for signal sampling #
 
     # get time values from request & cast it to float
     time_values = [float(i) for i in request.form.getlist('time[]')]
@@ -85,7 +94,7 @@ def sample_signal():
 
 @app.route('/add-signals', methods=['POST'])
 def add_signal():
-    # get up parameters for signal adding #
+    # get up parameters from the frontend for signal adding #
 
     # get amplitude of first signal from request & cast it to float array
     signal_1_amp = [float(i) for i in request.form.getlist('signal1[]')]
@@ -104,7 +113,7 @@ def add_signal():
 
 @app.route('/subtract-signals', methods=['POST'])
 def subtract_signal():
-    # get up parameters for signal subtraction #
+    # get up parameters from the frontend  for signal subtraction #
 
     # get amplitude of first signal from request & cast it to float array
     signal_main = [float(i) for i in request.form.getlist('signal1[]')]
@@ -112,8 +121,11 @@ def subtract_signal():
     # get amplitude of second signal from request & cast it to float array
     signal_to_be_subtracted = [float(x) for x in request.form.getlist('signal2[]')]
 
-    signal_1_amp_np_array = np.array(signal_main)  # convert python list to np array for easy subtracting amplitude
-    signal_2_amp_np_array = np.array(signal_to_be_subtracted)  # convert python list to np array for easy subtracting amplitude
+    # convert python list to np array for easy subtracting amplitude
+    signal_1_amp_np_array = np.array(signal_main)
+
+    # convert python list to np array for easy subtracting amplitude
+    signal_2_amp_np_array = np.array(signal_to_be_subtracted)
 
     # subtract the signal
     subtracted_signal = signal_1_amp_np_array - signal_2_amp_np_array
@@ -123,6 +135,7 @@ def subtract_signal():
 
 @app.route('/add-noise', methods=['POST'])
 def add_noise():
+    # get up parameters from the frontend for noise addition #
 
     #  get time and cast it to float
     time = [float(i) for i in request.form.getlist('time[]')]
@@ -149,22 +162,32 @@ def add_noise():
 
 @app.route('/reconstruct-signal', methods=['POST'])
 def signal_reconstruction():
+    # get up parameters from the frontend for signal reconstruction #
+
+    #  get time values and cast it to float
+    time = [float(i) for i in request.form.getlist('time[]')]
+    
+    #  get sampled points time values and cast it to float
+    sampled_time = [float(i) for i in request.form.getlist('sampledTime[]')]
+
+    #  get sampled points y value and cast it to float
     sampled_signal = [float(i) for i in request.form.getlist('sampledSignal[]')]
-    sampled_frequency = float(request.values['sampledSignalFrequency'])
 
-    time = np.arange(0, 5, 0.01)
-    T_sampled = (1/sampled_frequency)
-    t_sampled = np.arange(0, 5, T_sampled)
+    # matrix that have all the time points
+    matrix_time = np.resize(time, (len(sampled_time), len(time)))
 
-    samples = len(t_sampled)
+    # apply the ((t - nT)/T) equation
+    # make broadcasting
+    interpolation = (matrix_time.T - sampled_time) / (sampled_time[1] - sampled_time[0])
 
-    x1reconstructed = np.zeros(len(time))
+    # Reconstruct the signal with the sinc interpolation = x[n] sinc(v)
+    matrix_result = sampled_signal * np.sinc(interpolation)
 
-    for i in range(1, len(time)):
-        for n in range(1, samples):
-            x1reconstructed[i] = x1reconstructed[i] + sampled_signal[n] * np.sinc((time[i] - n * T_sampled) / T_sampled)
+    # get the reconstructed y vales by summing all the values
+    reconstructed_signal_y = np.sum(matrix_result, axis=1)
 
-    return list(x1reconstructed)
+    return list(reconstructed_signal_y)
+
 
 # --------------------------------------------------------------------------------------#
 #                                       Run App
@@ -172,4 +195,4 @@ def signal_reconstruction():
 
 
 if __name__ == "__main__":
-    app.run(debug=True, port='5002')
+    app.run(debug=True, port=5002)

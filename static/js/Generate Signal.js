@@ -23,7 +23,8 @@ class GenerateSignal {
                 x: [0],
                 y: [0],
                 mode: "lines",
-                type: "scatter"
+                type: "scatter",
+                name: 'Signal'
             }
         ];
 
@@ -53,7 +54,7 @@ class GenerateSignal {
             mode: "lines",
             type: "scatter",
             line: {
-                color: '#00b4fa'
+                color: '#ff3c00'
             }
         }]
 
@@ -69,9 +70,13 @@ class GenerateSignal {
         };
 
 
-        /**   Plot layout settings  */
+        /**   Plot layout settings
+         * xaxis: -> propetries of xaxis
+         *      title.text: -> title of x axis
+         * yaxis: -> propetries of yaxis
+         *      title.text: -> title of x yxis
+         * */
         this.layout = {
-            title: "Main Plot",
             xaxis: {
                 title: {
                     text: 'time (s)',
@@ -79,27 +84,33 @@ class GenerateSignal {
             },
             yaxis: {
                 title: {
-                    text: 'amplitude (mv)'
+                    text: 'amplitude (mV)'
                 }
             },
             font: {size: 12},
         };
     }
 
+    /**************************************************************************************
+     *                           Operations on signal functions
+     **************************************************************************************/
+
     constructNewSignal(amplitude, frequency, type = 'sin') {
 
-        /**  empty string for expression to be expressed  **/
+        /**  setting the coming value to this signal **/
         this.freq = frequency;
         this.amp = amplitude;
         this.type = type;
+
+        /**   new values to store the response of server  **/
         let xData, yData
 
         /**
          *  ajax call to retrieve data from the server
          *  method -> post
          *  url -> visit wave generation api
-         *  dataType -> returned response formate
-         *  data -> data to be sent to the server with the specifications
+         *  dataType -> returned response format
+         *  data -> data to be sent to the server with the specification
          *  res[0] -> time array
          *  res[1] -> values array
          * **/
@@ -130,35 +141,15 @@ class GenerateSignal {
         ];
     }
 
-    plot(amplitude, frequency, type, div) {
-
-        /**   generate new signal  **/
-        const data = this.constructNewSignal(amplitude, frequency, type);
-
-        /**  plot this signal   **/
-        Plotly.newPlot(div, data, this.layout, this.config);
-    }
-
-    changeAmplitude(amplitude) {
-        /** set the amplitude of this signal to new amplitude **/
-        this.amp = amplitude
-
-        /**  generate new signal with the new amplitude   **/
-        this.constructNewSignal(amplitude, this.freq, this.type);
-    }
-
-    changeFrequency(frequency) {
-        /** set the frequency of this signal to new frequency **/
-        this.freq = frequency
-
-        /**  generate new signal with the new frequency   **/
-        this.constructNewSignal(this.amp, frequency, this.type);
-    }
-
     sampleSignal(rateOfSampling, data = this.data) {
+
+        /**   new values to store the response of server  **/
         let sampledX = [];
         let sampledY = [];
+
+        /** set the sampling frequency to the coming signal frequency**/
         this.samplingFrequency = rateOfSampling;
+
         /**
          *  ajax call to retrieve sampled data from the server
          *  method -> post
@@ -184,6 +175,7 @@ class GenerateSignal {
                 sampledY = res[1];
             }
         });
+
         /**  set the sampling data to the data coming from the server   */
         this.sampledData = [
             {
@@ -195,10 +187,100 @@ class GenerateSignal {
         ]
     }
 
+    addSignals(amplitude, frequency, type) {
+        /**  generate new signal with the given values   **/
+        let added = this.constructNewSignal(amplitude, frequency, type)
+
+        /**   new value to store the response of server  **/
+        let additionResult = []
+
+
+
+
+        /**   first time make this signal = the signal data of y  **/
+        if (this.signalsCount === 0) {
+            this.data[0].y = added[0].y
+            this.data[0].x = added[0].x
+        } else {
+
+            /**
+             *  ajax call to retrieve added signals data from the server
+             *  method -> post
+             *  url -> visit reconstruction api
+             *  dataType -> returned response format
+             *  data -> data to be sent to the server with the sampled signal & sampling frequency
+             *  res -> added signal array
+             * **/
+
+            $.ajax({
+                method: 'POST',
+                url: 'http://127.0.0.1:5002/add-signals',
+                async: false,
+                dataType: 'json',
+                data: {
+                    signal1: this.data[0].y,
+                    signal2: added[0].y,
+                },
+                success: function (res, status, xhr) {
+                    additionResult = res;
+                }
+            });
+            /**   set the new data of y to the result of addition  **/
+            this.data[0].y = additionResult
+        }
+
+        /**   increment the signal count  **/
+        this.signalsCount++;
+
+        /**   add signal to the list  **/
+        this.signalsList[`Signal${this.signalsCount}`] = added;
+    }
+
+    deleteSignal(signalName) {
+        /**  get the deleted signal fro the list   **/
+        let deleted = this.signalsList[signalName]
+
+        /**   new values to store the response of server  **/
+        let subtractionResult = []
+
+        /**
+         *  ajax call to retrieve deleted data from the server
+         *  method -> post
+         *  url -> visit reconstruction api
+         *  dataType -> returned response format
+         *  data -> data to be sent to the server with the sampled signal & sampling frequency
+         *  res -> deleted signal array
+         * **/
+
+        $.ajax({
+            method: 'POST',
+            url: 'http://127.0.0.1:5002/subtract-signals',
+            async: false,
+            dataType: 'json',
+            data: {
+                signal1: this.data[0].y,
+                signal2: deleted[0].y,
+            },
+            success: function (res, status, xhr) {
+                subtractionResult = res;
+            }
+        });
+
+        /**   set the new data of y to the result of subtraction  **/
+        this.data[0].y = subtractionResult;
+
+        /**   deleted signal from the list  **/
+        delete this.signalsList[signalName];
+
+        /**   decrement the signal count  **/
+        this.signalsCount--;
+    }
+
     addNoise(SNR) {
         if (SNR >= 0) {
+
+            /**   new value to store the response of server  **/
             let noiseData;
-            this.noiseData[0].x = this.data[0].x
 
             /**
              *  ajax call to retrieve noise data from the server
@@ -232,12 +314,9 @@ class GenerateSignal {
         }
     }
 
-    plotNoise() {
-        /**  plot the noise on first canvas   **/
-        Plotly.newPlot("canvas-1", this.noiseData, this.layout, this.config);
-    }
+    reconstructSignal() {
 
-    reconstructSignal(rateOfSampling) {
+        /**   new values to store the response of server  **/
         let reconstructedX = []
         let reconstructedY = []
 
@@ -259,8 +338,9 @@ class GenerateSignal {
             async: false,
             dataType: 'json',
             data: {
-                sampledSignal: this.sampledData[0].y,
-                sampledSignalFrequency: this.samplingFrequency,
+                time: this.data[0].x,
+                sampledTime: this.sampledData[0].x,
+                sampledSignal: this.sampledData[0].y
             },
             success: function (res, status, xhr) {
                 reconstructedY = res;
@@ -272,37 +352,55 @@ class GenerateSignal {
         this.reconstructedData[0].y = reconstructedY
     }
 
-    updateCanvas2(rateOfSampling) {
+    /**************************************************************************************
+     *                                Plotting Functions
+     **************************************************************************************/
+
+    plot(amplitude, frequency, type, div) {
+
+        /**   generate new signal  **/
+        const data = this.constructNewSignal(amplitude, frequency, type);
+
+        /**  plot this signal   **/
+        Plotly.newPlot(div, data, this.layout, this.config);
+    }
+
+    updateCanvas() {
 
         /** reconstruct signal with the new sampling rate   **/
-        this.reconstructSignal(rateOfSampling)
+        this.reconstructSignal()
 
         /** set the plot name of the signals **/
         this.reconstructedData[0].name = 'Reconstructed'
         this.sampledData[0].name = 'Sampled'
+        this.noiseData[0].name = 'Signal with Noise'
 
+        let data = []
+
+        /**   if the noise is enabled (SNR < 100) update the canvas with the noise data
+         *    else if the noise is not enabled (SNR = 100) update the canvas with the normal data
+         * **/
+        if (noiseInputSlider.value < 100) {
+            data =
+                [
+                    this.noiseData[0],
+                    this.reconstructedData[0],
+                    this.sampledData[0]
+                ]
+        } else {
+            data =
+                [
+                    this.data[0],
+                    this.reconstructedData[0],
+                    this.sampledData[0]
+                ]
+        }
+
+        /**  plot the new data   **/
         Plotly.newPlot(
-            "canvas-2",
-            [
-                this.reconstructedData[0],
-                this.sampledData[0]
-            ],
-            {
-                title: "Processed Plot of the Signal",
-                font: {
-                    size: 12
-                },
-                xaxis: {
-                    title: {
-                        text: 'time(s)'
-                    }
-                },
-                yaxis: {
-                    title: {
-                        text: 'amplitude(mV)'
-                    }
-                }
-            },
+            "canvas-1",
+            data,
+            this.layout,
             this.config,
         );
 
@@ -333,58 +431,10 @@ class GenerateSignal {
         );
     }
 
-    addSignals(amplitude, frequency, type) {
-        let added = this.constructNewSignal(amplitude, frequency, type)
-        let additionResult = []
 
-        /**   first time make this signal = the signal data of y  **/
-        if (this.signalsCount === 0) {
-            this.data[0].y = added[0].y
-            this.data[0].x = added[0].x
-        } else {
-            $.ajax({
-                method: 'POST',
-                url: 'http://127.0.0.1:5002/add-signals',
-                async: false,
-                dataType: 'json',
-                data: {
-                    signal1: this.data[0].y,
-                    signal2: added[0].y,
-                },
-                success: function (res, status, xhr) {
-                    additionResult = res;
-                }
-            });
-            this.data[0].y = additionResult
-        }
-
-        this.signalsCount++;
-        this.signalsList[`Signal${this.signalsCount}`] = added;
-    }
-
-    deleteSignal(signalName) {
-
-        let deleted = this.signalsList[signalName]
-        let subtractionResult = []
-
-        $.ajax({
-            method: 'POST',
-            url: 'http://127.0.0.1:5002/subtract-signals',
-            async: false,
-            dataType: 'json',
-            data: {
-                signal1: this.data[0].y,
-                signal2: deleted[0].y,
-            },
-            success: function (res, status, xhr) {
-                subtractionResult = res;
-            }
-        });
-
-        this.data[0].y = subtractionResult;
-        delete this.signalsList[signalName];
-        this.signalsCount--;
-    }
+    /**************************************************************************************
+     *                             Open & Save Functions
+     **************************************************************************************/
 
     openSignalFromPC(file) {
         let time = []
@@ -392,13 +442,13 @@ class GenerateSignal {
         let keys = Object.keys(file[0])
 
         /** map through the file to extract values of the file **/
-
         file.map((d) => {
             time.push(d[keys[0]])
             values.push(d[keys[1]])
         })
 
-        ++this.signalsCount;             /** increment the added signals array **/
+        /** increment the added signals array **/
+        ++this.signalsCount;
 
         /**  set the value of the current signal to the values coming from the file  **/
         this.data[0].x = time;

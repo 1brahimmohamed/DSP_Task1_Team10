@@ -30,7 +30,7 @@ body {
 
 .btn:hover {
     opacity: 0.8;
-    var(--light);
+var(--light);
 }
 
 
@@ -123,7 +123,7 @@ body {
     color: #d9d9d9;
 }
 
-#current-components{
+#current-components {
     display: block;
     width: 100%;
     border: none;
@@ -193,49 +193,58 @@ body {
     font-size: 14px;
 }
 
-#generate:hover{
+#generate:hover {
     color: white;
 }
-#add:hover{
+
+#add:hover {
     color: white;
 }
-#remove-signal:hover{
+
+#remove-signal:hover {
     color: white;
 }
-#save:hover{
+
+#save:hover {
     color: white;
 }
-#upload:hover{
+
+#upload:hover {
     color: white;
 }
 
 
-.options{
+.options {
     text-align: center;
     width: 100%;
     margin-bottom: -5px;
     font-size: medium;
     font-weight: bolder;
 }
-.info{
+
+.info {
     text-align: center;
     width: 100%;
     font-size: medium;
     font-weight: bolder;
 }
-.table{
+
+.table {
     width: 100%;
 }
-.controls{
-     width: 30%;
+
+.controls {
+    width: 30%;
     float: left;
     padding: 5px;
 }
-.controls1{
+
+.controls1 {
     width: 70%;
     float: left;
     padding: 5px;
 }
+
 /*.signal-table tr:nth-child(even) {*/
 /*    background-color: #f2f2f2;*/
 /*}*/
@@ -252,9 +261,10 @@ body {
     color: white;
 }
 
-.signal-table tr.selected{
+.signal-table tr.selected {
     background-color: #6e6e6e;
 }
+
 .panel.panel-primary {
     border-color: #e9e9e9;
     box-shadow: var(--shadow);

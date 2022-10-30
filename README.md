@@ -12,7 +12,7 @@ Biomedical Digital Signal Processing (SBE3110) class project created by:
 1. [Rawan Ghanem](https://github.com/rawan-ghanem)
 
 ### Submitted to:
-- Dr. Tamer Basha & Eng...
+- Dr. Tamer Basha & Eng. Mohamed Mostafa
 
 
 All rights reserved © 2022 to Team 10 - Systems & Biomedical Engineering, Cairo University (Class 2024)
