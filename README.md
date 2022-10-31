@@ -25,7 +25,7 @@ interpolation formula.
 
 `Sampling Formula -> Fsample >= 2 * Fmaximum`
 
-![](data/readme data/SampLab.gif)
+![](data/readme%20data/SampLab.gif)
 
 ### Project Features
 In this web application you can
@@ -37,22 +37,22 @@ In this web application you can
 
 > 3. Remove signal components from the current signal
 
-![](data/readme data/Generate and remove.gif)
+![](data/readme%20data/Generate%20and%20remove.gif)
 
 > 4. Add signal from signal composer by your frequency and amplitude
 
 > 5. Remove signal components from the current signal
 
-![](data/readme data/Added signals and save.gif)
+![](data/readme%20data/Added%20signals%20and%20save.gif)
 
 
 > 6. Add Noise to the signal
 
-![](data/readme data/Adding Noise.gif)
+![](data/readme%20data/Adding%20Noise.gif)
 
 > 7. Sample signal
 
-> 8. Reconstruct signal from sampled signa .
+> 8. Reconstruct signal from sampled signal
 
 ### Project Structure
 The Web Application is built using:
