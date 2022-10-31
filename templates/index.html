@@ -24,44 +24,50 @@
     <div class="panel with-nav-tabs panel-primary">
         <div class="panel-heading">
             <ul class="nav nav-tabs">
-                <li class="active" id="home-tab"><a>Home</a></li>
-                <li id="reconstruction-tab"><a>Signal Info</a></li>
+                <li class="active" id="home-tab"><a>Controls</a></li>
             </ul>
         </div>
         <div class="panel-body">
             <div class="tab-content">
                 <div class="tab-pane fade in active" id="home-body">
+                    <div style="display: inline-block; margin-right: 8.5rem;vertical-align: top">
+                        <input type="file" id="selectedFile" style="display: none;"/>
+                        <input class="btn" type="button" id="upload" value="Upload"
+                               onclick="document.getElementById('selectedFile').click();"/>
+                        <a id="download-redirect">
+                            <button class="btn" id="save">Save</button>
+                        </a>
+                        <button class="btn" id="generate-random">Generate Random Signal</button>
+                    </div>
+                    <div style="display: inline-block;">
+                        <form class="form-inline">
+                            <div class="form-group">
+                                <h6>Frequency (Hz)</h6>
+                                <input type="number" min="1" class="form-control" id="frequency" placeholder="Frequency">
+                            </div>
+                            <div class="form-group">
+                                <h6>Amplitude (mV)</h6>
+                                <input type="number" min="1" class="form-control" id="amplitude" placeholder="Amplitude">
+                            </div>
+                            <div class="form-group">
+                                <h6>Type (Sin/Cos)</h6>
+                                <input type="text" class="form-control" id="type" placeholder="Type">
+                            </div>
+                            <div class="form-group">
+                                <h6>Sampling Frequency (Hz)</h6>
+                                <input type="number" min="1" class="form-control" id="sample" placeholder="Sample Rate">
+                            </div>
+                            <div class="form-group">
+                                <h6> Sampling by Max Frequency (Hz)</h6>
+                                <input type="number" min="1" class="form-control" id="sample-freq-max" placeholder="N Max Frequency">
+                            </div>
+                            <div class="form-group">
+                                <button class="btn" type="button" id="add" style="margin-left: 10px;margin-top: 30px;">Add Signal</button>
+                            </div>
+                        </form>
+                    </div>
 
-                    <input type="file" id="selectedFile" style="display: none;"/>
-                    <input class="btn" type="button" id="upload" value="Upload"
-                           onclick="document.getElementById('selectedFile').click();"/>
-                    <a id="download-redirect">
-                        <button class="btn" id="save">Save</button>
-                    </a>
-                    <button class="btn" id="generate-random">Generate Random Signal</button>
-                </div>
-                <div class="tab-pane fade in tab " id="reconstruction-body">
-                    <form class="form-inline">
-                        <div class="form-group">
-                            <h6>Frequency (Hz)</h6>
-                            <input type="number" min="1" class="form-control" id="frequency" placeholder="Frequency">
-                        </div>
-                        <div class="form-group">
-                            <h6>Amplitude (mV)</h6>
-                            <input type="number" min="1" class="form-control" id="amplitude" placeholder="Amplitude">
-                        </div>
-                        <div class="form-group">
-                            <h6>Type (Sin/Cos)</h6>
-                            <input type="text" class="form-control" id="type" placeholder="Type">
-                        </div>
-                        <div class="form-group">
-                            <h6>Sampling Frequency (Hz)</h6>
-                            <input type="number" min="0" class="form-control" id="sample" placeholder="Sample Rate">
-                        </div>
-                        <div class="form-group">
-                            <button class="btn" type="button" id="add">Generate</button>
-                        </div>
-                    </form>
+
                 </div>
             </div>
         </div>
@@ -97,7 +103,7 @@
             <div class="slider-container">
                 <p>SNR Ratio</p>
                 <input type="range" min="1" max="100" value="100" class="slider" id="myRange">
-                <p>Value: <span id="snr-value-text"></span></p>
+                <p id="snr-value-text">Value: 100</p>
             </div>
         </div>
         <div class="plotting">

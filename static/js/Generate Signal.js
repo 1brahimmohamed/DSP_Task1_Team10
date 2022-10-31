@@ -65,7 +65,7 @@ class GenerateSignal {
          * **/
         this.config = {
             responsive: true,
-            editable: true,
+            editable: false,
             displaylogo: false
         };
 
@@ -98,7 +98,9 @@ class GenerateSignal {
     constructNewSignal(amplitude, frequency, type = 'sin') {
 
         /**  setting the coming value to this signal **/
-        this.freq = frequency;
+        if (frequency > this.freq)
+            this.freq = frequency;
+
         this.amp = amplitude;
         this.type = type;
 
@@ -136,7 +138,8 @@ class GenerateSignal {
                 x: xData,
                 y: yData,
                 mode: "lines",
-                type: "scatter"
+                type: "scatter",
+                freq: frequency
             }
         ];
     }
@@ -182,7 +185,12 @@ class GenerateSignal {
                 x: sampledX,
                 y: sampledY,
                 type: "line",
-                mode: 'markers'
+                mode: 'markers',
+                line: {
+                    color: '#008a09',
+                    width: 10
+                }
+
             }
         ]
     }
@@ -237,7 +245,7 @@ class GenerateSignal {
     }
 
     deleteSignal(signalName) {
-        /**  get the deleted signal fro the list   **/
+        /**  get the deleted signal from the list   **/
         let deleted = this.signalsList[signalName]
 
         /**   new values to store the response of server  **/
@@ -373,7 +381,7 @@ class GenerateSignal {
         /** set the plot name of the signals **/
         this.reconstructedData[0].name = 'Reconstructed'
         this.sampledData[0].name = 'Sampled'
-        this.noiseData[0].name = 'Signal with Noise'
+        this.noiseData[0].name = 'Signal'
 
         let data = []
 
@@ -455,7 +463,7 @@ class GenerateSignal {
         this.data[0].y = values;
 
         /**  add the signal data to the list of the signals   **/
-        this.signalsList[`Signals ${this.signalsCount}`] = [
+        this.signalsList[`Signal${this.signalsCount}`] = [
             {
                 x: this.data[0].x,
                 y: this.data[0].y,
@@ -469,7 +477,7 @@ class GenerateSignal {
 
         let csv = []        // create object 'csv' to store signal values
         for (let i = 0; i < x.length; ++i) {
-            csv.push([x[i], y[i]])
+            csv.push([x[i], y[i]],)
         }
         /**  object returned to be converted to CSV   **/
         return csv

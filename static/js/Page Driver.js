@@ -1,49 +1,8 @@
 /**************************************************************************************
- *                                  Upper Bar Handler
- **************************************************************************************/
-
-let homeTab = document.getElementById('home-tab'),
-    reconstructionTab = document.getElementById('reconstruction-tab'),
-    homeBody = document.getElementById('home-body'),
-    reconstructionBody = document.getElementById('reconstruction-body')
-
-/**
- * Toggle the bars when clicked
- * **/
-
-homeTab.onclick = function () {
-    if (!homeBody.classList.contains('active') && !homeTab.classList.contains('active')) {
-
-        // remove class active from the tab and div of reconstruction tab
-        reconstructionBody.classList.remove('active')
-        reconstructionTab.classList.remove('active')
-
-        // add class active from the tab and div of Home tab
-        homeBody.classList.add('active')
-        homeTab.classList.add('active')
-    }
-}
-
-reconstructionTab.onclick = function () {
-    if (!reconstructionBody.classList.contains('active') && !reconstructionTab.classList.contains('active')) {
-
-        // remove class active from the tab and div of Home tab
-        homeBody.classList.remove('active')
-        homeTab.classList.remove('active')
-
-
-        // add class active for the tab and div of reconstruction Tab
-        reconstructionBody.classList.add('active')
-        reconstructionTab.classList.add('active')
-    }
-
-}
-
-/**************************************************************************************
  *                                  Variables Definition
  **************************************************************************************/
 
-let signal = new GenerateSignal()
+let viewedSignal = new GenerateSignal()
 
 /**      Buttons      **/
 let generateBtn = document.getElementById('add'),
@@ -62,6 +21,7 @@ let frequencyInputField = document.getElementById('frequency'),
     amplitudeInputField = document.getElementById('amplitude'),
     typeInputField = document.getElementById('type'),
     samplingRateInputField = document.getElementById('sample'),
+    fMaxSamplingInputField = document.getElementById('sample-freq-max'),
     noiseInputSlider = document.getElementById('myRange')
 
 /**    Tables     **/
@@ -77,19 +37,19 @@ let snrValueText = document.getElementById('snr-value-text')
 async function generateSignal(freq, amp, type, sampFreq) {
 
     // generate signal
-    signal.addSignals(amp, freq, type);
+    viewedSignal.addSignals(amp, freq, type);
 
-     /**  if the sampling frequency is more than the current sampling frequency
-      *   then consider it, else it will take the old sampling frequency
-      *   (getting the max of the sampling frequencies)
-      * **/
-    if (sampFreq > signal.samplingFrequency) {
-        signal.samplingFrequency = sampFreq
+    /**  if the sampling frequency is more than the current sampling frequency
+     *   then consider it, else it will take the old sampling frequency
+     *   (getting the max of the sampling frequencies)
+     * **/
+    if (sampFreq > viewedSignal.samplingFrequency) {
+        viewedSignal.samplingFrequency = sampFreq
     }
 
     /**   create an HTML table element(row) and append it to the table   **/
-    // get signal count
-    let signalCount = signal.signalsCount
+        // get signal count
+    let signalCount = viewedSignal.signalsCount
 
     // create the element
     let item = document.createElement('tr');
@@ -107,7 +67,7 @@ async function generateSignal(freq, amp, type, sampFreq) {
 
     /**   create an HTML combo box element(option) and append it to the combo box   **/
 
-    // create the element
+        // create the element
     let option = document.createElement("option");
     option.text = ` (Signal${signalCount}) \t Frequency= ${freq}, Amplitude= ${amp}`
     option.value = `Signal${signalCount}`
@@ -118,20 +78,25 @@ async function generateSignal(freq, amp, type, sampFreq) {
     /**   decide which data to plot based on the SNR ratio selected  **/
 
     if (noiseInputSlider.value < 100) {
-        signal.addNoise(noiseInputSlider.value);
-        signal.motionPlot("canvas-1", signal.noiseData);
-        await signal.motionPlot("canvas-1", signal.noiseData);
-        signal.sampleSignal(signal.samplingFrequency, signal.noiseData);
+        viewedSignal.addNoise(noiseInputSlider.value);
+        viewedSignal.motionPlot("canvas-1", viewedSignal.noiseData);
+        await viewedSignal.motionPlot("canvas-1", viewedSignal.noiseData);
+        viewedSignal.sampleSignal(viewedSignal.samplingFrequency, viewedSignal.noiseData);
     } else {
-        signal.motionPlot("canvas-1", signal.data);         // plot signal
-        await signal.motionPlot("canvas-1", signal.data);   // animate plot
-        signal.sampleSignal(signal.samplingFrequency);                             // sample the signal
+        viewedSignal.motionPlot("canvas-1", viewedSignal.data);         // plot signal
+        await viewedSignal.motionPlot("canvas-1", viewedSignal.data);   // animate plot
+        viewedSignal.sampleSignal(viewedSignal.samplingFrequency);                             // sample the signal
     }
     // update the plot
-    signal.updateCanvas();
+    viewedSignal.updateCanvas();
 
+    frequencyInputField.value = viewedSignal.freq
+    amplitudeInputField.value = viewedSignal.amp
+    typeInputField.value = viewedSignal.type
     // set the sampling input field value to the current max sampling frequency
-    samplingRateInputField.value = signal.samplingFrequency
+    samplingRateInputField.value = viewedSignal.samplingFrequency
+    fMaxSamplingInputField.value = (viewedSignal.samplingFrequency / viewedSignal.freq)
+    fMaxSamplingInputField.disabled = false;
 }
 
 function resetSignalValues() {
@@ -140,9 +105,9 @@ function resetSignalValues() {
      *  - deleting data from signal data arrays
      *  - return the input field value of sampling frequency to nothing
      * **/
-    signal.samplingFrequency = 0;
-    signal.freq = 0;
-    signal.amp = 0
+    viewedSignal.samplingFrequency = 0;
+    viewedSignal.freq = 0;
+    viewedSignal.amp = 0
     this.data = [
         {
             x: [],
@@ -180,6 +145,11 @@ function resetSignalValues() {
         }
     }]
     samplingRateInputField.value = ''
+    frequencyInputField.value = ''
+    amplitudeInputField.value = ''
+    typeInputField.value = ''
+    fMaxSamplingInputField.value = ''
+    fMaxSamplingInputField.disabled = true
 }
 
 /**************************************************************************************
@@ -221,7 +191,7 @@ generateBtn.onclick = async function () {
 saveBtn.onclick = () => {
     let myCSVObject = []
 
-    myCSVObject = signal.exportSignalToCSV(signal.reconstructedData[0].x, signal.reconstructedData[0].y)
+    myCSVObject = viewedSignal.exportSignalToCSV(viewedSignal.reconstructedData[0].x, viewedSignal.reconstructedData[0].y)
     // }
     let csv = 'x,y\n';
 
@@ -232,26 +202,26 @@ saveBtn.onclick = () => {
 
     // make the redirection to the download api
     redirect.href = 'data:text/csv;charset=utf-8,' + encodeURI(csv);
-    redirect.download = `Signal${signal.signalsCount}`;
+    redirect.download = `Signal${viewedSignal.signalsCount}`;
 }
 
 // Remove Signal Button
 removeSignalBtn.onclick = async () => {
 
     // if there is no signal don't do anything
-    if (signal.signalsCount === 0)
+    if (viewedSignal.signalsCount === 0)
         return;
 
-    // get sampling frequency from the inout field
+    // get sampling frequency from the input field
     let sampFreq = samplingRateInputField.value;
 
     // if the sampling frequency is empty set it to the signal sampling frequency
     if (sampFreq === '')
-        sampFreq = signal.samplingFrequency
+        sampFreq = viewedSignal.samplingFrequency
 
 
     // delete signal from the combo box
-    signal.deleteSignal(signalsComboBox.value);
+    viewedSignal.deleteSignal(signalsComboBox.value);
 
     // get the signal and remove it by its ID
     let removed = document.getElementById(signalsComboBox.value)
@@ -262,14 +232,14 @@ removeSignalBtn.onclick = async () => {
      *  else we plot the normal data
      * **/
 
-    if (signal.signalsCount === 0) {
+    if (viewedSignal.signalsCount === 0) {
         let data = [
             {
                 x: [0],
                 y: [0]
             }
         ];
-        await signal.motionPlot("canvas-1", data);
+        await viewedSignal.motionPlot("canvas-1", data);
         Plotly.react(
             "canvas-1",
             [
@@ -283,27 +253,42 @@ removeSignalBtn.onclick = async () => {
                     size: 12
                 }
             },
-            signal.config
+            viewedSignal.config
         );
+
+        /** remove the signal from the combo box **/
+        signalsComboBox.remove(signalsComboBox.selectedIndex)
 
         /** reset values of the signal object **/
         resetSignalValues()
+        return;
 
     } else if (noiseInputSlider.value < 100) {
-        signal.addNoise(noiseInputSlider.value);
-        signal.motionPlot("canvas-1", signal.noiseData);
-        await signal.motionPlot("canvas-1", signal.noiseData);
-        signal.sampleSignal(sampFreq, signal.noiseData);
-        signal.updateCanvas();
+        viewedSignal.addNoise(noiseInputSlider.value);
+        viewedSignal.motionPlot("canvas-1", viewedSignal.noiseData);
+        await viewedSignal.motionPlot("canvas-1", viewedSignal.noiseData);
+        viewedSignal.sampleSignal(sampFreq, viewedSignal.noiseData);
+        viewedSignal.updateCanvas();
 
     } else {
-        signal.motionPlot("canvas-1", signal.data);
-        await signal.motionPlot("canvas-1", signal.data);
-        signal.sampleSignal(sampFreq);
-        signal.updateCanvas();
+        viewedSignal.motionPlot("canvas-1", viewedSignal.data);
+        await viewedSignal.motionPlot("canvas-1", viewedSignal.data);
+        viewedSignal.sampleSignal(sampFreq);
+        viewedSignal.updateCanvas();
     }
     // remove the signal from the combo box
     signalsComboBox.remove(signalsComboBox.selectedIndex)
+
+    let fMax = 0;
+    for (const sig in viewedSignal.signalsList) {
+        if (viewedSignal.signalsList[sig][0].freq > fMax)
+            fMax = viewedSignal.signalsList[sig][0].freq
+    }
+
+    viewedSignal.freq = fMax;
+
+    frequencyInputField.value = fMax
+
 }
 
 
@@ -344,21 +329,21 @@ uploadBtn.oninput = function (event) {
     fileReader.onload = async function (ev) {
         let csv = ev.target.result,
             parsedFile = d3.csvParse(csv)
-        signal.openSignalFromPC(parsedFile)
+        viewedSignal.openSignalFromPC(parsedFile)
 
         let option = document.createElement("option");
-        option.text = `(Signal${signal.signalsCount})`
-        option.value = `Signal${signal.signalsCount}`
+        option.text = `(Signal${viewedSignal.signalsCount})`
+        option.value = `Signal${viewedSignal.signalsCount}`
         signalsComboBox.appendChild(option)
-        signal.motionPlot('canvas-1', signal.data)
-        await signal.motionPlot('canvas-1', signal.data)
-        signal.sampleSignal(sampFreq)
-        signal.updateCanvas()
+        viewedSignal.motionPlot('canvas-1', viewedSignal.data)
+        await viewedSignal.motionPlot('canvas-1', viewedSignal.data)
+        viewedSignal.sampleSignal(sampFreq)
+        viewedSignal.updateCanvas()
 
         let item = document.createElement('tr');
-        item.setAttribute('id', `signal-table${signal.signalsCount}`);
+        item.setAttribute('id', `signal-table${viewedSignal.signalsCount}`);
         item.innerHTML = `
-                    <td>Signal ${signal.signalsCount}</td>
+                    <td>Signal ${viewedSignal.signalsCount}</td>
                     <td>XX Hz</td>
                     <td>XX </td>
                     <td>Imported</td>
@@ -373,20 +358,48 @@ samplingRateInputField.onchange = async function () {
     // get the sampling frequency input
     let samplingRate = samplingRateInputField.value;
     // check if it's not zero
-    if (signal.signalsCount !== 0) {
+    if (viewedSignal.signalsCount !== 0) {
         // noise applied
         if (noiseInputSlider.value < 100) {
             // sample signal with noise data
-            signal.sampleSignal(samplingRate, signal.noiseData);
+            viewedSignal.sampleSignal(samplingRate, viewedSignal.noiseData);
         } else {
             // sample the normal data
-            signal.sampleSignal(samplingRate);
+            viewedSignal.sampleSignal(samplingRate);
         }
 
+        fMaxSamplingInputField.value = (viewedSignal.samplingFrequency / viewedSignal.freq)
+
         // replot the canvas
-        signal.updateCanvas();
+        viewedSignal.updateCanvas();
     }
 };
+
+fMaxSamplingInputField.onchange = async function () {
+    let samplingFMaxRate = fMaxSamplingInputField.value;
+
+    samplingFMaxRate *= viewedSignal.freq
+
+    samplingRateInputField.value = samplingFMaxRate
+    if (samplingFMaxRate === 0) {
+        return
+    } else {
+
+        if (viewedSignal.signalsCount !== 0) {
+            // noise applied
+            if (noiseInputSlider.value < 100) {
+                // sample signal with noise data
+                viewedSignal.sampleSignal(samplingFMaxRate, viewedSignal.noiseData);
+            } else {
+                // sample the normal data
+                viewedSignal.sampleSignal(samplingFMaxRate);
+            }
+
+            // replot the canvas
+            viewedSignal.updateCanvas();
+        }
+    }
+}
 
 // noise slider change
 noiseInputSlider.onmouseup = function () {
@@ -395,20 +408,20 @@ noiseInputSlider.onmouseup = function () {
 
     // if the sampling frequency is empty set it to the signal sampling frequency
     if (sampFreq === '')
-        sampFreq = signal.samplingFrequency
+        sampFreq = viewedSignal.samplingFrequency
 
     // set the signal SNR to the value coming from the slider
-    signal.addNoise(noiseInputSlider.value);
+    viewedSignal.addNoise(noiseInputSlider.value);
 
     // plot the noise
     // sample the new signal
-    signal.sampleSignal(sampFreq, signal.noiseData);
-    signal.updateCanvas();
+    viewedSignal.sampleSignal(sampFreq, viewedSignal.noiseData);
+    viewedSignal.updateCanvas();
 };
 
 // noise slider view the change value
 noiseInputSlider.onchange = function () {
-    snrValueText.innerHTML = noiseInputSlider.value;
+    snrValueText.innerHTML = 'Value: ' + noiseInputSlider.value;
 }
 
 /**************************************************************************************
@@ -419,8 +432,8 @@ Plotly.newPlot(
     "canvas-1",
     [
         {
-            x: [0],
-            y: [0]
+            x: [],
+            y: []
         }
     ],
     {
@@ -428,5 +441,7 @@ Plotly.newPlot(
             size: 12
         }
     },
-    signal.config)
+    viewedSignal.config)
 ;
+
+generateSignal(2, 3, 'sin', 4)

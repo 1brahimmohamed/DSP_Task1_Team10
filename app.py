@@ -81,7 +81,7 @@ def sample_signal():
     signal_amp_values = [float(x) for x in request.form.getlist('values[]')]
 
     # get signal type (sin or cos) from request
-    sampling_frequency = int(request.values['samplingFrequency'])
+    sampling_frequency = float(request.values['samplingFrequency'])
 
     # sample the signal
     sampled_time_values, sampled_signal_values = sample(time_values, signal_amp_values, sampling_frequency)
@@ -152,6 +152,7 @@ def add_noise():
 
     # get A factor as SNR = signal power/ A * noise power
     # signal power = signal values ^2, noise power = noise values ^2
+    # SNR = Power(Signal)/A*Power(Noise)
     a_factor = (np.mean(signal_np**2)) / (signal_to_noise_ratio * np.mean(np.square(initial_noise)))
 
     final_noise = a_factor * initial_noise          # the signal according to the SNR
