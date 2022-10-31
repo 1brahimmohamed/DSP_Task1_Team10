@@ -2,7 +2,8 @@
 
 ## Table of contents:
 - [Introduction](#introduction)
-- [Project Overview](#project-overview)
+- [Quick Preview](#quick-preview)
+- [Project Features](#project-features)
 - [Project Structure](#project-structure)
 - [How to Run The Project](#run-the-project)
 - [Team]()
@@ -14,7 +15,19 @@ When sampling at a frequency greater than or equal to the signal's bandwidth,
 the Nyquist-Shannon sampling theorem ensures that the signal will fully recover
 (or double the maximum frequency in case of real signals).
 
-### Project Overview
+### Quick Preview
+Web application using frontend technologies & flask for illustrating how the sampling theory work,
+applying Nyquist sampling, validating it and reconstructing the signal again from the sample points. It can also 
+generate signals with various frequencies , amplitudes, sum them up or remove them to make a new signal.
+
+The Sampling is done with Nyquist sampling while the reconstruction using Whittaker–Shannon
+interpolation formula.
+
+`Sampling Formula -> Fsample >= 2 * Fmaximum`
+
+![](data/readme data/SampLab.gif)
+
+### Project Features
 In this web application you can
 > 1. Upload signals from your computer as CSV file format
 
@@ -39,7 +52,7 @@ In this web application you can
 
 > 7. Sample signal
 
-> 8. Reconstruct signal from sampled signal
+> 8. Reconstruct signal from sampled signa .
 
 ### Project Structure
 The Web Application is built using:
@@ -83,9 +96,7 @@ Download it from www.python.org/downloads/
    - flask_cors
  - Open Project Terminal & Run
 ```
-pip install numpy
-pip install flask
-pip install flask_cors
+pip install -r requirments.txt
 ```
 3. Start Server by Running 
 ```
@@ -103,7 +114,6 @@ First Semester - Biomedical Digital Signal Processing (SBE3110) class project cr
 | [Maye Khaled](https://github.com/mayekhaled0)         |    2    |  40  |
 | [Amar Al Anany](https://github.com/amaralanany12345)  |    2    |  1   |
 | [Rawan Ghanem](https://github.com/rawan-ghanem)       |    1    |  33  |
-
 
 ### Submitted to:
 - Dr. Tamer Basha & Eng. Mohamed Mostafa
