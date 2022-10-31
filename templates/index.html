@@ -2,34 +2,46 @@
 <html lang="en">
 
 <head>
+    <!--  encoding  -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!--  CSS Files   -->
     <link rel="stylesheet" href="../static/css/style.css">
+    <link href="//netdna.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+
+    <!--  Scripts  -->
     <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.6.1/d3.min.js"></script>
     <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
     <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <link href="//netdna.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
     <script src="//netdna.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
 
-
+    <!--  Window Title  -->
     <title>SAMPLAB</title>
 </head>
 
 <body>
+
+<!-- Application Name   -->
 <nav class="main-nav">
     <h1>SAMPLAB - Signal Studio</h1>
 </nav>
+
+<!--Control Menu-->
 <div class="col-md-15">
     <div class="panel with-nav-tabs panel-primary">
+        <!--   Control Menu Heading     -->
         <div class="panel-heading">
             <ul class="nav nav-tabs">
                 <li class="active" id="home-tab"><a>Controls</a></li>
             </ul>
         </div>
+        <!--    Control Menu Body    -->
         <div class="panel-body">
             <div class="tab-content">
                 <div class="tab-pane fade in active" id="home-body">
+                    <!--     Buttons      -->
                     <div style="display: inline-block; margin-right: 8.5rem;vertical-align: top">
                         <input type="file" id="selectedFile" style="display: none;"/>
                         <input class="btn" type="button" id="upload" value="Upload"
@@ -39,48 +51,56 @@
                         </a>
                         <button class="btn" id="generate-random">Generate Random Signal</button>
                     </div>
+                    <!--      Signal Info     -->
                     <div style="display: inline-block; margin-right: 8rem">
                         <form class="form-inline">
                             <div class="form-group">
                                 <h6>Frequency (Hz)</h6>
-                                <input type="number" min="1" class="form-control" id="frequency" placeholder="Frequency">
+                                <input type="number" min="1" class="form-control" id="frequency"
+                                       placeholder="Frequency">
                             </div>
                             <div class="form-group">
                                 <h6>Amplitude (mV)</h6>
-                                <input type="number" min="1" class="form-control" id="amplitude" placeholder="Amplitude">
+                                <input type="number" min="1" class="form-control" id="amplitude"
+                                       placeholder="Amplitude">
                             </div>
 
                             <div class="form-group">
-                                <button class="btn" type="button" id="add" style="margin-left: 10px;margin-top: 30px;">Add Signal</button>
+                                <button class="btn" type="button" id="add" style="margin-left: 10px;margin-top: 30px;">
+                                    Add Signal
+                                </button>
                             </div>
-<!--                            <div class="form-group">-->
-<!--                                <h6>Type (Sin/Cos)</h6>-->
-<!--&lt;!&ndash;                                <input type="text" class="form-control" id="type" placeholder="Type">&ndash;&gt;-->
-<!--                            </div>-->
+                            <!--                            <div class="form-group">-->
+                            <!--                                <h6>Type (Sin/Cos)</h6>-->
+                            <!--&lt;!&ndash;                                <input type="text" class="form-control" id="type" placeholder="Type">&ndash;&gt;-->
+                            <!--                            </div>-->
                         </form>
                     </div>
+                    <!--      Sampling Info     -->
                     <div style="display: inline-block;">
                         <form class="form-inline">
-                        <div class="form-group">
-                            <h6>Sampling Frequency (Hz)</h6>
-                            <input type="number" min="1" class="form-control" id="sample" placeholder="Sample Rate">
-                        </div>
-                        <div class="form-group">
-                            <h6> Sampling by Max Frequency (Hz)</h6>
-                            <input type="number" min="1" class="form-control" id="sample-freq-max" placeholder="N Max Frequency">
-                        </div>
+                            <div class="form-group">
+                                <h6>Sampling Frequency (Hz)</h6>
+                                <input type="number" min="1" class="form-control" id="sample" placeholder="Sample Rate">
+                            </div>
+                            <div class="form-group">
+                                <h6> Sampling by Max Frequency (Hz)</h6>
+                                <input type="number" min="1" class="form-control" id="sample-freq-max"
+                                       placeholder="N Max Frequency">
+                            </div>
                         </form>
 
                     </div>
-
                 </div>
             </div>
         </div>
     </div>
 </div>
 
+<!--Application Body-->
 <div class="base">
     <section class="main-body">
+        <!--    Upper Box    -->
         <div class="box box-a">
             <div class="info">
                 <p>Signal Info</p>
@@ -96,6 +116,7 @@
 
 
         </div>
+        <!--    Lower Box    -->
         <div class="box box-b">
             <div class="options">
                 <p>Advanced Options</p>
@@ -111,11 +132,14 @@
                 <p id="snr-value-text">Value: 100</p>
             </div>
         </div>
+        <!--    Plotting Body    -->
         <div class="plotting">
             <div class="canvas" id="canvas-1"></div>
         </div>
     </section>
 </div>
+
+<!--    Needed Scripts    -->
 <script src="../static/js/jquery-3.6.1.min.js"></script>
 <script src="../static/js/Generate%20Signal.js"></script>
 <script src="../static/js/Page%20Driver.js"></script>

@@ -1,7 +1,6 @@
 import numpy as np
 from flask import Flask, request, render_template
 from flask_cors import CORS
-import pandas as pd
 
 # Create flask application
 app = Flask(__name__)
@@ -58,9 +57,7 @@ def generate_signal():
     time = np.linspace(0, 6, 1500)
 
     # set the signal type
-    if signal_type == 'sin':
-        signal_y_values = amp * np.sin(2 * np.pi * freq * time)  # generate the sin signal values
-    elif signal_type == 'cos':
+    if signal_type == 'cos':
         signal_y_values = amp * np.cos(2 * np.pi * freq * time)  # generate the cos signal values
     else:
         return 'invalid signal type'  # invalid request

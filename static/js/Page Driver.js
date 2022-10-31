@@ -168,7 +168,7 @@ generateBtn.onclick = async function () {
             confirmButtonColor: '#004072',
         })
     }
-    /**   if user write valid input >> procced  **/
+    /**   if user write valid input >> proceed  **/
     else {
         // let type = typeInputField.value
         let sampFreq = samplingRateInputField.value
@@ -189,10 +189,8 @@ generateBtn.onclick = async function () {
 
 // Save Signal Button
 saveBtn.onclick = () => {
-    let myCSVObject = []
 
-    myCSVObject = viewedSignal.exportSignalToCSV(viewedSignal.reconstructedData[0].x, viewedSignal.reconstructedData[0].y)
-
+    let myCSVObject = viewedSignal.exportSignalToCSV(viewedSignal.reconstructedData[0].x, viewedSignal.reconstructedData[0].y)
     let csv = 'x,y,freq,amp\n';
 
     myCSVObject.forEach(function (row) {
@@ -228,7 +226,7 @@ removeSignalBtn.onclick = async () => {
     removed.remove()
 
     /**  if this is the last signal (signal count = 0) then we have to clear the plot
-     *  if not we see the SNR, if its less than 100 we plot the noise data
+     *  if not we see the SNR, if it's less than 100 we plot the noise data
      *  else we plot the normal data
      * **/
 
@@ -377,7 +375,7 @@ samplingRateInputField.onchange = async function () {
 
         fMaxSamplingInputField.value = (viewedSignal.samplingFrequency / viewedSignal.freq)
 
-        // replot the canvas
+        // re plot the canvas
         viewedSignal.updateCanvas();
     }
 };
@@ -389,7 +387,7 @@ fMaxSamplingInputField.onchange = async function () {
 
     samplingRateInputField.value = samplingFMaxRate
     if (samplingFMaxRate === 0) {
-        return
+        return;
     } else {
 
         if (viewedSignal.signalsCount !== 0) {
@@ -402,7 +400,7 @@ fMaxSamplingInputField.onchange = async function () {
                 viewedSignal.sampleSignal(samplingFMaxRate);
             }
 
-            // replot the canvas
+            // re plot the canvas
             viewedSignal.updateCanvas();
         }
     }
@@ -451,4 +449,5 @@ Plotly.newPlot(
     viewedSignal.config)
 ;
 
+// the default signal
 generateSignal(2, 3, 'cos', 4)
