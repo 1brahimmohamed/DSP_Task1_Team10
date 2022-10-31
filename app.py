@@ -1,6 +1,7 @@
 import numpy as np
 from flask import Flask, request, render_template
 from flask_cors import CORS
+import pandas as pd
 
 # Create flask application
 app = Flask(__name__)
@@ -24,7 +25,7 @@ def sample(time, amplitude, freq_sample):
     # time list must be equal to amplitude list
     if len(time) == len(amplitude):
         # get points per time
-        points_per_indices = int((len(time) / time[-1]) / freq_sample)
+        points_per_indices = round((len(time) / time[-1]) / freq_sample)
 
         # extract the sampled time points by taking a value each step ( step point= points_per_indices)
         time = time[::points_per_indices]
@@ -54,7 +55,7 @@ def generate_signal():
     signal_type = request.values['type']  # get signal type (sin or cos) from request
 
     # generate time for signal generation
-    time = np.linspace(0, 5, 500)
+    time = np.linspace(0, 6, 1500)
 
     # set the signal type
     if signal_type == 'sin':
@@ -167,7 +168,7 @@ def signal_reconstruction():
 
     #  get time values and cast it to float
     time = [float(i) for i in request.form.getlist('time[]')]
-    
+
     #  get sampled points time values and cast it to float
     sampled_time = [float(i) for i in request.form.getlist('sampledTime[]')]
 

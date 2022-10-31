@@ -19,10 +19,10 @@ let signalsComboBox = document.getElementById('current-components')
 /**      Input Fields       **/
 let frequencyInputField = document.getElementById('frequency'),
     amplitudeInputField = document.getElementById('amplitude'),
-    typeInputField = document.getElementById('type'),
     samplingRateInputField = document.getElementById('sample'),
     fMaxSamplingInputField = document.getElementById('sample-freq-max'),
     noiseInputSlider = document.getElementById('myRange')
+// typeInputField = document.getElementById('type'),
 
 /**    Tables     **/
 let signalsTable = document.getElementById('signals')
@@ -38,7 +38,6 @@ async function generateSignal(freq, amp, type, sampFreq) {
 
     // generate signal
     viewedSignal.addSignals(amp, freq, type);
-
     /**  if the sampling frequency is more than the current sampling frequency
      *   then consider it, else it will take the old sampling frequency
      *   (getting the max of the sampling frequencies)
@@ -92,7 +91,7 @@ async function generateSignal(freq, amp, type, sampFreq) {
 
     frequencyInputField.value = viewedSignal.freq
     amplitudeInputField.value = viewedSignal.amp
-    typeInputField.value = viewedSignal.type
+    // typeInputField.value = viewedSignal.type
     // set the sampling input field value to the current max sampling frequency
     samplingRateInputField.value = viewedSignal.samplingFrequency
     fMaxSamplingInputField.value = (viewedSignal.samplingFrequency / viewedSignal.freq)
@@ -147,7 +146,7 @@ function resetSignalValues() {
     samplingRateInputField.value = ''
     frequencyInputField.value = ''
     amplitudeInputField.value = ''
-    typeInputField.value = ''
+    // typeInputField.value = ''
     fMaxSamplingInputField.value = ''
     fMaxSamplingInputField.disabled = true
 }
@@ -171,18 +170,19 @@ generateBtn.onclick = async function () {
     }
     /**   if user write valid input >> procced  **/
     else {
-        let type = typeInputField.value
+        // let type = typeInputField.value
         let sampFreq = samplingRateInputField.value
 
+        // console.log(type === 'cos')
         // default value for sin Type
-        if (type === '' || type !== 'sin' || type !== 'cos')
-            type = 'sin'
+        // if (type !== 'cos')
+        //     type = 'sin'
 
         // default value for sampling frequency
         if (sampFreq === '')
             sampFreq = 2 * frequencyInputField.value
 
-        await generateSignal(frequencyInputField.value, amplitudeInputField.value, type, sampFreq)
+        await generateSignal(frequencyInputField.value, amplitudeInputField.value, 'cos', sampFreq)
     }
 
 };
@@ -192,8 +192,8 @@ saveBtn.onclick = () => {
     let myCSVObject = []
 
     myCSVObject = viewedSignal.exportSignalToCSV(viewedSignal.reconstructedData[0].x, viewedSignal.reconstructedData[0].y)
-    // }
-    let csv = 'x,y\n';
+
+    let csv = 'x,y,freq,amp\n';
 
     myCSVObject.forEach(function (row) {
         csv += row.join(',');
@@ -279,13 +279,19 @@ removeSignalBtn.onclick = async () => {
     // remove the signal from the combo box
     signalsComboBox.remove(signalsComboBox.selectedIndex)
 
-    let fMax = 0;
+    let fMax = 0,
+        ampMax = 2;
+
     for (const sig in viewedSignal.signalsList) {
         if (viewedSignal.signalsList[sig][0].freq > fMax)
             fMax = viewedSignal.signalsList[sig][0].freq
+
+        if (viewedSignal.signalsList[sig][0].amp > ampMax)
+            ampMax = viewedSignal.signalsList[sig][0].amp
     }
 
     viewedSignal.freq = fMax;
+    viewedSignal.amp = ampMax;
 
     frequencyInputField.value = fMax
 
@@ -298,12 +304,12 @@ randomSignal.onclick = async function () {
     /**  generate random values for:
      *   frequency (1~5)
      *   amplitude (1-10)
-     *   type => sin by default
+     *   type => cos by default
      *   sampling frequency = 2 x the max frequency
      * **/
     let randFreq = Math.floor(Math.random() * (5 - 1) + 1),
         randAmp = Math.floor(Math.random() * (10 - 1) + 1),
-        randType = 'sin',
+        randType = 'cos',
         randSampFreq = 2 * randFreq;
 
     // generate the signal
@@ -329,7 +335,8 @@ uploadBtn.oninput = function (event) {
     fileReader.onload = async function (ev) {
         let csv = ev.target.result,
             parsedFile = d3.csvParse(csv)
-        viewedSignal.openSignalFromPC(parsedFile)
+
+        let [freq, amp] = viewedSignal.openSignalFromPC(parsedFile)
 
         let option = document.createElement("option");
         option.text = `(Signal${viewedSignal.signalsCount})`
@@ -344,8 +351,8 @@ uploadBtn.oninput = function (event) {
         item.setAttribute('id', `signal-table${viewedSignal.signalsCount}`);
         item.innerHTML = `
                     <td>Signal ${viewedSignal.signalsCount}</td>
-                    <td>XX Hz</td>
-                    <td>XX </td>
+                    <td>${freq} Hz</td>
+                    <td>${amp}</td>
                     <td>Imported</td>
     `
         signalsTable.appendChild(item)
@@ -444,4 +451,4 @@ Plotly.newPlot(
     viewedSignal.config)
 ;
 
-generateSignal(2, 3, 'sin', 4)
+generateSignal(2, 3, 'cos', 4)

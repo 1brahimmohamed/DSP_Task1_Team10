@@ -8,8 +8,8 @@ class GenerateSignal {
         /** initial frequency = 0 **/
         this.amp = 0;
         /** initial amplitude = 0 **/
-        this.type = 'sin'
-        /** initial signal type -> sin wave **/
+        this.type = 'cos'
+        /** initial signal type -> cos wave **/
         this.samplingFrequency = 0;
 
         /** Signal X,Y Values **/
@@ -80,7 +80,8 @@ class GenerateSignal {
             xaxis: {
                 title: {
                     text: 'time (s)',
-                }
+                },
+                range: [0,4]
             },
             yaxis: {
                 title: {
@@ -95,13 +96,15 @@ class GenerateSignal {
      *                           Operations on signal functions
      **************************************************************************************/
 
-    constructNewSignal(amplitude, frequency, type = 'sin') {
+    constructNewSignal(amplitude, frequency, type = 'cos') {
 
         /**  setting the coming value to this signal **/
         if (frequency > this.freq)
             this.freq = frequency;
 
-        this.amp = amplitude;
+        if (amplitude > this.amp)
+            this.amp = amplitude
+
         this.type = type;
 
         /**   new values to store the response of server  **/
@@ -447,12 +450,15 @@ class GenerateSignal {
     openSignalFromPC(file) {
         let time = []
         let values = []
+        let freq, amp
         let keys = Object.keys(file[0])
 
         /** map through the file to extract values of the file **/
         file.map((d) => {
             time.push(d[keys[0]])
             values.push(d[keys[1]])
+            freq = (d[keys[2]])
+            amp =(d[keys[3]])
         })
 
         /** increment the added signals array **/
@@ -471,14 +477,17 @@ class GenerateSignal {
                 type: 'scatter'
             }
         ]
+        return [freq,amp]
     }
 
     exportSignalToCSV(x, y) {
 
         let csv = []        // create object 'csv' to store signal values
         for (let i = 0; i < x.length; ++i) {
-            csv.push([x[i], y[i]],)
+            csv.push([x[i], y[i], this.freq,this.amp])
         }
+
+        console.log(csv)
         /**  object returned to be converted to CSV   **/
         return csv
     }
